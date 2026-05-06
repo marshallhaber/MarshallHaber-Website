@@ -162,32 +162,20 @@ export default function Insights() {
                     {card.label}
                   </p>
 
-                  {card.titleLarge ? (
-                    <h3
-                      className="font-bold leading-tight tracking-tighter"
-                      style={{
-                        fontFamily: "'PP Mori', sans-serif",
-                        fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
-                      }}
-                    >
-                      {card.titleLarge}
-                    </h3>
-                  ) : (
-                    <h3
-                      className="font-bold leading-tight tracking-tight"
-                      style={{
-                        fontFamily: "'PP Mori', sans-serif",
-                        fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)",
-                      }}
-                    >
-                      {card.title.split("\n").map((line, j, arr) => (
-                        <span key={j}>
-                          {line}
-                          {j < arr.length - 1 && <br />}
-                        </span>
-                      ))}
-                    </h3>
-                  )}
+                  <h3
+                    className="font-bold leading-tight tracking-tight"
+                    style={{
+                      fontFamily: "'PP Mori', sans-serif",
+                      fontSize: "clamp(1.6rem, 3.2vw, 2.4rem)",
+                    }}
+                  >
+                    {(card.titleLarge || card.title).split("\n").map((line, j, arr) => (
+                      <span key={j}>
+                        {line}
+                        {j < arr.length - 1 && <br />}
+                      </span>
+                    ))}
+                  </h3>
                 </div>
 
                 {/* Description */}

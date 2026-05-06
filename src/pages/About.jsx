@@ -127,7 +127,11 @@ export default function About() {
           <h2 className={styles.ctaHeading}>Send Request</h2>
         </button>
 
-        <TransitionLink to="/services" className={styles.ctaBlockPink}>
+        <button
+          onClick={() => setIsContactModalOpen(true)}
+          className={styles.ctaBlockPink}
+          style={{ border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', width: '100%' }}
+        >
           <div className={styles.ctaTextTop}>
             <strong>Our free offer for B2B tech scaleups!</strong>
             <span>We identify high-impact messaging and brand fixes you can implement within 24 hours.</span>
@@ -142,7 +146,7 @@ export default function About() {
               <h2 className={styles.ctaHeadingUnderlined}>Masterplan</h2>
             </div>
           </div>
-        </TransitionLink>
+        </button>
       </section>
 
       <ContactModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />

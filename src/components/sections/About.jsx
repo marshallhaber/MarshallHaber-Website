@@ -49,10 +49,10 @@ export default function About() {
 
   return (
     // ✅ FULL PAGE BACKGROUND FIX
-    <div className="w-full min-h-screen bg-[#020817]">
+    <div className="w-full bg-[#020817]">
 
       {/* ✅ YOUR ORIGINAL CONTAINER (UNCHANGED DESIGN) */}
-      <div className="px-6 md:px-12 py-24 md:py-32 flex items-center w-full text-[#fbf0f2] relative min-h-screen">
+      <div className="px-6 md:px-12 py-20 md:py-24 flex items-center w-full text-[#fbf0f2] relative">
 
         <div className="grid grid-cols-1 md:grid-cols-12 w-full gap-20">
 

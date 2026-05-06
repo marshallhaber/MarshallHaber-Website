@@ -35,14 +35,14 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-8 md:gap-10 text-left md:text-right mt-10 md:mt-0">
+        <div className="flex flex-col gap-8 md:gap-12 text-left md:text-right mt-10 md:mt-0">
           <div>
-            <h4 className="text-[10px] uppercase font-bold tracking-widest mb-2 opacity-50">Say Hello</h4>
-            <a href="mailto:studio@marshallhaber.com" className="text-[1.5rem] md:text-[1.3rem] font-semibold hover:opacity-60 transition-opacity">studio@marshallhaber.com</a>
+            <h4 className="text-[10px] uppercase font-bold tracking-widest mb-3 opacity-50">Say Hello</h4>
+            <a href="mailto:studio@marshallhaber.com" className="text-[1.8rem] sm:text-[2.5rem] md:text-[2rem] font-bold tracking-tight hover:opacity-60 transition-opacity leading-tight">studio@marshallhaber.com</a>
           </div>
           <div>
-            <h4 className="text-[10px] uppercase font-bold tracking-widest mb-2 opacity-50">Call us</h4>
-            <a href="tel:+12124949052" className="text-[1.5rem] md:text-[1.3rem] font-semibold hover:opacity-60 transition-opacity">+1 212.494.9052</a>
+            <h4 className="text-[10px] uppercase font-bold tracking-widest mb-3 opacity-50">Call us</h4>
+            <a href="tel:+12124949052" className="text-[1.8rem] sm:text-[2.5rem] md:text-[2rem] font-bold tracking-tight hover:opacity-60 transition-opacity leading-tight">+1 212.494.9052</a>
           </div>
         </div>
       </div>
@@ -52,12 +52,13 @@ export default function Footer() {
       </div>
 
       {/* Bottom Legal Links */}
-      <div className={`w-full flex justify-center items-center text-[10px] font-bold uppercase tracking-widest px-4 border-t ${borderClass} pt-8 mt-12`}>
+      <div className={`w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-4 text-[10px] font-bold uppercase tracking-widest px-4 border-t ${borderClass} pt-8 mt-12`}>
         <div className="flex items-center gap-4">
           <p>© 2015—2026 Marshall Haber Creative Group</p>
           <span aria-hidden="true" className="opacity-40">|</span>
           <TransitionLink to="/legal" className="hover:opacity-60 transition-opacity">Legal</TransitionLink>
         </div>
+        <p className="md:text-right">99 Wall Street, Suite #1467, New York, NY 10005, United States</p>
       </div>
     </footer>
   );
