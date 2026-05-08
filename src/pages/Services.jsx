@@ -3,50 +3,22 @@ import { useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import videoSrc from '../assets/video.mp4';
+import { usePageContent } from '../hooks/usePageContent';
+import { getContent } from '../lib/content';
+import { defaults } from '../lib/contentDefaults';
 
 gsap.registerPlugin(ScrollTrigger);
 import styles from './Services.module.css';
 
-const serviceCards = [
-  {
-    id: 'premium',
-    title: 'Premium Branding',
-    text: 'Our bestseller for scaleups: a premium branding approach that connects strategy and creativity to turn complex value into a clear and credible story for enterprise buyers.',
-    featured: false,
-  },
-  {
-    id: 'sprint',
-    title: 'Sprint',
-    text: 'Sprints are 1-month projects designed to create a brand or website quickly and efficiently for early-stage startups.',
-    featured: false,
-  },
-  {
-    id: 'subscription',
-    title: 'Subscription',
-    text: 'Design subscriptions are our way of collaborating long-term with clients, acting as their extended team to speed up growth and ensure consistency.',
-    featured: true,
-  },
-  {
-    id: 'venture',
-    title: 'Venture',
-    text: 'Venture relationships involve high commitment projects where we invest our expertise and resources in exchange for shares.',
-    featured: false,
-  },
-];
-
-const brandingServices = [
-  { name: 'Brand Strategy', tagline: "It's the core of your company's identity." },
-  { name: 'Identity', tagline: 'Distinctive visual systems built to last.' },
-  { name: 'Digital', tagline: 'High-performance digital experiences.' },
-  { name: 'Product', tagline: 'Thoughtfully designed products, built for real use.' },
-  { name: 'Sprints', tagline: 'Rapid cycles to move ideas forward fast.' },
-  { name: 'Experiential', tagline: 'Immersive brand experiences with real-world impact.' },
-  { name: 'Film & Content', tagline: 'Cinematic storytelling that drives engagement.' },
-  { name: 'Objects', tagline: 'Physical expressions of your brand.' },
-];
-
 export default function Services() {
   const videoRef = useRef(null);
+  const { sections } = usePageContent("services");
+  const heroHeading = getContent(sections, "hero.heading", defaults.services.hero.heading);
+  const sidebarLabel = getContent(sections, "sidebar.label", defaults.services.sidebar.label);
+  const sidebarText = getContent(sections, "sidebar.text", defaults.services.sidebar.text);
+  const serviceCards = getContent(sections, "serviceCards", defaults.services.serviceCards);
+  const programsHeading = getContent(sections, "programs.heading", defaults.services.programs.heading);
+  const brandingServices = getContent(sections, "programs.services", defaults.services.programs.services);
 
   useLayoutEffect(() => {
     document.body.style.backgroundColor = '#fbf0f2';
@@ -94,7 +66,7 @@ export default function Services() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
-          We equip, empower, and inspire tomorrow's leaders through premium branding
+          {heroHeading}
         </motion.h1>
       </section>
 
@@ -108,11 +80,8 @@ export default function Services() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.15 }}
         >
-          <span className={styles.sidebarLabel}>When?</span>
-          <p className={styles.sidebarText}>
-            Our work focusses on B2B tech scaleups at Series A &amp; B stage. On top of that we work
-            with one early stage startup at a time. Honoring both our passion and how we started.
-          </p>
+          <span className={styles.sidebarLabel}>{sidebarLabel}</span>
+          <p className={styles.sidebarText}>{sidebarText}</p>
         </motion.div>
 
         <div className={styles.grid}>
@@ -156,7 +125,7 @@ export default function Services() {
 
       {/* ── Branding services list ── */}
       <section className={styles.programs}>
-        <h2 className={styles.programsHeading}>Our branding services</h2>
+        <h2 className={styles.programsHeading}>{programsHeading}</h2>
         <div className={styles.programsList}>
           {brandingServices.map((s) => (
             <div key={s.name} className={styles.programRow} role="link" tabIndex={0}>

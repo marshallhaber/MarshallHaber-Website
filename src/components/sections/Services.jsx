@@ -9,6 +9,11 @@ export default function ServiceBlock({
   textColor = "text-[#1a1a1a]",
   imageContent,
 }) {
+  const items = Array.isArray(list)
+    ? list
+    : typeof list === "string"
+      ? list.split(",").map((s) => s.trim()).filter(Boolean)
+      : [];
   return (
     <div
       className={`w-full flex flex-col md:flex-row items-stretch ${textColor} relative`}
@@ -50,7 +55,7 @@ export default function ServiceBlock({
             className="text-[14px] md:text-[16px] font-normal leading-[1.9]"
             style={{ fontFamily: "'PP Mori', sans-serif" }}
           >
-            {list.map((item, i) => (
+            {items.map((item, i) => (
               <li key={i}>{item}</li>
             ))}
           </ul>

@@ -9,10 +9,24 @@ import ClientSection from "../components/sections/ClientSection";
 import CTA from "../components/sections/CTA";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePageContent } from "../hooks/usePageContent";
+import { getContent } from "../lib/content";
+import { defaults } from "../lib/contentDefaults";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const PANEL_VISUALS = [
+  <StrategyVideo key="0" />,
+  <VisualImage key="1" />,
+  <WebsiteImage key="2" />,
+  <ProductImage key="3" />,
+];
+
 export default function Home() {
+  const { sections } = usePageContent("home");
+  const cmsServicePanels = getContent(sections, "servicePanels", defaults.home.servicePanels);
+  const servicesLabel = getContent(sections, "servicesLabel", defaults.home.servicesLabel);
+
   useLayoutEffect(() => {
     // Set initial body color for home page
     document.body.style.backgroundColor = "#020817";
@@ -71,48 +85,25 @@ export default function Home() {
     };
   }, []);
 
-  const servicePanels = [
-    {
-      bg: "#2B59C3",
-      children: <ServiceBlock
-        title="Brand Strategy"
-        description="It’s the core of your company’s identity. It guides all business decisions, ensuring a consistent and impactful presence in the market."
-        list={["Research & Insights", "Brand Model", "Positioning", "Value proposition", "Messaging", "Verbal Identity", "Naming"]}
-        imageContent={<StrategyVideo />}
-        textColor="text-[#fbf0f2]"
-      />
-    },
-    {
-      bg: "#0B0215",
-      children: <ServiceBlock
-        title="Identity"
-        description="Distinctive visual systems designed to be immediate, enduring, and unmistakable."
-        list={["Logo & Wordmark", "Typography & Color", "Art Direction", "Brand Systems", "Guidelines"]}
-        imageContent={<VisualImage />}
-        textColor="text-[#fbf0f2]"
-      />
-    },
-    {
-      bg: "#fbf0f2",
-      children: <ServiceBlock
-        title="Digital"
-        description="High-performance digital experiences—designed with precision and built to scale."
-        list={["UX & UI Design", "Website Design", "Web Development", "Interaction & Motion"]}
-        imageContent={<WebsiteImage />}
-        textColor="text-[#020817]"
-      />
-    },
-    {
-      bg: "#020817",
-      children: <ServiceBlock
-        title="Product"
-        description="Thoughtfully designed products that are intuitive, refined, and built for real use."
-        list={["UX Design", "Prototyping", "UI Systems", "App Design"]}
-        textColor="text-[#fbf0f2]"
-        imageContent={<ProductImage />}
-      />
-    },
-  ];
+  const servicePanels = cmsServicePanels.map((panel, i) => {
+    const items = Array.isArray(panel.items)
+      ? panel.items
+      : typeof panel.items === "string"
+        ? panel.items.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
+    return {
+      bg: panel.bg,
+      children: (
+        <ServiceBlock
+          title={panel.title}
+          description={panel.description}
+          list={items}
+          imageContent={PANEL_VISUALS[i % PANEL_VISUALS.length]}
+          textColor={panel.textColor || "text-[#fbf0f2]"}
+        />
+      ),
+    };
+  });
 
   return (
     <>
@@ -132,7 +123,7 @@ export default function Home() {
       </div>
 
       <div className="w-full flex items-end pt-4 pb-4 px-6 bg-[#fbf0f2] text-[#020817]" style={{ fontFamily: "'PP Mori', sans-serif" }}>
-        <span className="text-[2.2rem] md:text-[3rem] font-bold tracking-tighter leading-none">Services</span>
+        <span className="text-[2.2rem] md:text-[3rem] font-bold tracking-tighter leading-none">{servicesLabel}</span>
       </div>
       <StackContainer panels={servicePanels} />
 

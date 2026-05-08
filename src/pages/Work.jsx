@@ -1,12 +1,14 @@
-import { useState, useMemo, useLayoutEffect, useEffect, useRef } from 'react';
+import { useState, useMemo, useLayoutEffect, useRef } from 'react';
 import TransitionLink from '../components/ui/TransitionLink';
 import { motion, AnimatePresence } from 'framer-motion';
 import hardcodedProjects from '../data/projects';
 import styles from './Work.module.css';
+import { usePageContent } from '../hooks/usePageContent';
+import { getContent } from '../lib/content';
+import { defaults } from '../lib/contentDefaults';
 
 export default function Work() {
   const [activeTab, setActiveTab] = useState('Featured');
-  const [cmsProjects, setCmsProjects] = useState([]);
   const [hoveredSlug, setHoveredSlug] = useState(null);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
   const listRef = useRef(null);
@@ -20,28 +22,26 @@ export default function Work() {
     };
   }, []);
 
-  useEffect(() => {
-    fetch("/api/admin/pages/work")
-      .then(res => res.json())
-      .then(data => {
-        const cms = data?.sections?.projects || [];
-        const mapped = cms
-          .filter(p => p.title)
-          .map(p => ({
-            slug: p.slug || p.title.toLowerCase().replace(/\s+/g, '-'),
-            title: p.title,
-            subtitle: p.subtitle || '',
-            category: p.category || 'Uncategorized',
-            client: p.client || p.title,
-            description: p.description || '',
-            image: p.imageUrl || '',
-            video: p.videoUrl || '',
-            fromCms: true,
-          }));
-        setCmsProjects(mapped);
-      })
-      .catch(() => {});
-  }, []);
+  const { sections } = usePageContent("work");
+  const tabs = getContent(sections, "tabs", defaults.work.tabs);
+  const cmsRawProjects = getContent(sections, "projects", []);
+  const cmsProjects = useMemo(
+    () =>
+      cmsRawProjects
+        .filter(p => p.title)
+        .map(p => ({
+          slug: p.slug || p.title.toLowerCase().replace(/\s+/g, '-'),
+          title: p.title,
+          subtitle: p.subtitle || '',
+          category: p.category || 'Uncategorized',
+          client: p.client || p.title,
+          description: p.description || '',
+          image: p.imageUrl || '',
+          video: p.videoUrl || '',
+          fromCms: true,
+        })),
+    [cmsRawProjects]
+  );
 
   const allProjects = useMemo(() => {
     const hardcodedSlugs = new Set(hardcodedProjects.map(p => p.slug));
@@ -92,7 +92,7 @@ export default function Work() {
             aria-selected={activeTab === 'Featured'}
             onClick={() => { setActiveTab('Featured'); setHoveredSlug(null); }}
           >
-            Featured<span className={styles.tabCount}>{String(Math.min(6, allProjects.length)).padStart(2, '0')}</span>
+            {tabs.featured}<span className={styles.tabCount}>{String(Math.min(6, allProjects.length)).padStart(2, '0')}</span>
             {activeTab === 'Featured' && <span className={styles.tabDot} />}
           </button>
           <button
@@ -100,7 +100,7 @@ export default function Work() {
             aria-selected={activeTab === 'All projects'}
             onClick={() => { setActiveTab('All projects'); setHoveredSlug(null); }}
           >
-            All projects<span className={styles.tabCount}>{String(allProjects.length).padStart(2, '0')}</span>
+            {tabs.allProjects}<span className={styles.tabCount}>{String(allProjects.length).padStart(2, '0')}</span>
             {activeTab === 'All projects' && <span className={styles.tabDot} />}
           </button>
           <button
@@ -108,7 +108,7 @@ export default function Work() {
             aria-selected={activeTab === 'Industries'}
             onClick={() => { setActiveTab('Industries'); setHoveredSlug(null); }}
           >
-            Industries<span className={styles.tabCount}>{String(industriesCount).padStart(2, '0')}</span>
+            {tabs.industries}<span className={styles.tabCount}>{String(industriesCount).padStart(2, '0')}</span>
             {activeTab === 'Industries' && <span className={styles.tabDot} />}
           </button>
         </div>
@@ -177,7 +177,7 @@ export default function Work() {
                 <WorkRow
                   key={p.slug}
                   project={p}
-                  rightCol="Strategy, Visual Identity, Website"
+                  rightCol={getContent(sections, "metaLabel", defaults.work.metaLabel)}
                   onEnter={() => setHoveredSlug(p.slug)}
                   onLeave={() => setHoveredSlug(null)}
                 />

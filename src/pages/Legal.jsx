@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import styles from "./Legal.module.css";
+import { usePageContent } from "../hooks/usePageContent";
+import { getContent } from "../lib/content";
+import { defaults } from "../lib/contentDefaults";
 
 export default function Legal() {
   useEffect(() => {
@@ -12,6 +15,11 @@ export default function Legal() {
     };
   }, []);
 
+  const { sections } = usePageContent("legal");
+  const heading = getContent(sections, "hero.heading", defaults.legal.hero.heading);
+  const lastUpdated = getContent(sections, "hero.lastUpdated", defaults.legal.hero.lastUpdated);
+  const blocks = getContent(sections, "sections", defaults.legal.sections);
+
   return (
     <motion.div
       className={styles.page}
@@ -21,51 +29,29 @@ export default function Legal() {
       transition={{ duration: 0.5 }}
     >
       <section className={styles.hero}>
-        <h1 className={styles.heroHeading}>Legal</h1>
-        <p className={styles.heroSub}>
-          Last updated: 2026
-        </p>
+        <h1 className={styles.heroHeading}>{heading}</h1>
+        <p className={styles.heroSub}>{lastUpdated}</p>
       </section>
 
       <article className={styles.body}>
-        <section className={styles.block}>
-          <h2 className={styles.blockHeading}>Imprint</h2>
-          <p>
-            Marshall Haber Creative Group
-            <br />
-            99 Wall Street, Suite #1467
-            <br />
-            New York, NY 10005, United States
-          </p>
-          <p>
-            Email: <a href="mailto:studio@marshallhaber.com">studio@marshallhaber.com</a>
-          </p>
-        </section>
-
-        <section className={styles.block}>
-          <h2 className={styles.blockHeading}>Privacy</h2>
-          <p>
-            We respect your privacy. Personal data submitted through forms on this site is used solely
-            to respond to your inquiry and is never sold or shared with third parties for marketing
-            purposes. To request deletion or export of your data, contact us at the email above.
-          </p>
-        </section>
-
-        <section className={styles.block}>
-          <h2 className={styles.blockHeading}>Cookies</h2>
-          <p>
-            This site uses essential cookies for routing and accessibility. We do not use third-party
-            tracking cookies. Analytics, when enabled, are anonymized and aggregated.
-          </p>
-        </section>
-
-        <section className={styles.block}>
-          <h2 className={styles.blockHeading}>Intellectual Property</h2>
-          <p>
-            All content, branding, and design assets on this site are the property of Marshall Haber
-            Creative Group or our clients. Unauthorized reproduction is prohibited.
-          </p>
-        </section>
+        {blocks.map((block, i) => (
+          <section className={styles.block} key={i}>
+            <h2 className={styles.blockHeading}>{block.heading}</h2>
+            <p>
+              {block.content.split("\n").map((line, j, arr) => (
+                <span key={j}>
+                  {line}
+                  {j < arr.length - 1 && <br />}
+                </span>
+              ))}
+            </p>
+            {block.email && (
+              <p>
+                Email: <a href={`mailto:${block.email}`}>{block.email}</a>
+              </p>
+            )}
+          </section>
+        ))}
       </article>
     </motion.div>
   );

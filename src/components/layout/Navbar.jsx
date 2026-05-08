@@ -5,6 +5,9 @@ import { useLocation } from "react-router-dom";
 import TransitionLink from "../ui/TransitionLink";
 import ContactModal from "../ui/ContactModal";
 import gsap from "gsap";
+import { usePageContent } from "../../hooks/usePageContent";
+import { getContent } from "../../lib/content";
+import { defaults } from "../../lib/contentDefaults";
 
 // Right chevron ">" — default state on Contact button
 const ChevronRight = () => (
@@ -141,6 +144,11 @@ const DesktopMenu = () => {
   const { pathname } = useLocation();
   const staticStyle = { backgroundColor: "var(--accent-bg, #fbf0f2)", color: "var(--accent-text, #020817)" };
 
+  const { sections } = usePageContent("global");
+  const cmsMenu = getContent(sections, "nav.menu", defaults.global.nav.menu);
+  const menuButtonLabel = getContent(sections, "nav.menuButton", defaults.global.nav.menuButton);
+  const menuItems = cmsMenu.map((m) => ({ label: m.label, to: m.href, sub: [] }));
+
   const menuTimeoutRef = useRef(null);
   const itemTimeoutRef = useRef(null);
   const itemRefs = useRef({});
@@ -212,7 +220,7 @@ const DesktopMenu = () => {
                 exit={{ y: -20 }}
                 className="whitespace-nowrap"
               >
-                Menu
+                {menuButtonLabel}
               </motion.span>
             ) : (
               <motion.div
@@ -330,6 +338,8 @@ export default function Navbar() {
   const { scrollY } = useScroll();
   const { pathname } = useLocation();
   const isHomePage = pathname === "/";
+  const { sections: globalSections } = usePageContent("global");
+  const nav = getContent(globalSections, "nav", defaults.global.nav);
   const useShortLogoByDefault =
     pathname === "/work" ||
     pathname === "/clients" ||
@@ -414,7 +424,7 @@ export default function Navbar() {
       {/* Desktop Left: Contact */}
       <div className="hidden md:block shrink-0">
         <NavButton
-          text="Contact"
+          text={nav.contactButton}
           icon={<ChevronRight />}
           hoverIcon={<ChevronLeft />}
           isLetsWork={false}
@@ -489,24 +499,25 @@ export default function Navbar() {
             </div>
 
             <div className="flex flex-col gap-6 text-3xl font-semibold">
-              <TransitionLink to="/work" onClick={() => setIsOpen(false)}>Work</TransitionLink>
-              <TransitionLink to="/about" onClick={() => setIsOpen(false)}>About</TransitionLink>
-              <TransitionLink to="/clients" onClick={() => setIsOpen(false)}>Clients</TransitionLink>
-              <TransitionLink to="/services" onClick={() => setIsOpen(false)}>Services</TransitionLink>
+              {(nav.menu || []).map((item) => (
+                <TransitionLink key={item.href} to={item.href} onClick={() => setIsOpen(false)}>
+                  {item.label}
+                </TransitionLink>
+              ))}
               <button
                 type="button"
                 className="text-left"
                 onClick={() => { setIsOpen(false); setIsContactOpen(true); }}
               >
-                Contact
+                {nav.contactButton}
               </button>
             </div>
 
             <div className="text-sm">
-              <p className="uppercase text-xs opacity-50">Say hello</p>
-              <p className="underline mb-4">newbiz@marshallhaber.com</p>
-              <p className="uppercase text-xs opacity-50">Exceptional talent?</p>
-              <p className="underline">apply@marshallhaber.com</p>
+              <p className="uppercase text-xs opacity-50">{nav.sayHelloLabel}</p>
+              <p className="underline mb-4">{nav.sayHelloEmail}</p>
+              <p className="uppercase text-xs opacity-50">{nav.talentLabel}</p>
+              <p className="underline">{nav.talentEmail}</p>
             </div>
           </motion.div>
         )}

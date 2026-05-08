@@ -3,11 +3,18 @@ import { useRef } from "react";
 import Reveal from "../ui/Reveal";
 import TransitionLink from "../ui/TransitionLink";
 import projects from "../../data/projects";
+import { usePageContent } from "../../hooks/usePageContent";
+import { getContent } from "../../lib/content";
+import { defaults } from "../../lib/contentDefaults";
 
 const featured = projects.slice(0, 6);
 
 export default function Works() {
   const containerRef = useRef(null);
+  const { sections } = usePageContent("home");
+  const headingBold = getContent(sections, "works.headingBold", defaults.home.works.headingBold);
+  const headingItalic = getContent(sections, "works.headingItalic", defaults.home.works.headingItalic);
+  const ctaText = getContent(sections, "works.ctaText", defaults.home.works.ctaText);
 
   return (
     <div ref={containerRef} className="w-full px-6 pt-12 pb-10 bg-[#fbf0f2] text-[#020817]">
@@ -16,7 +23,7 @@ export default function Works() {
           className="text-[clamp(1.8rem,8vw,4.5rem)] md:text-[5.5vw] lg:text-[4.5vw] font-bold leading-[1.1] mb-16 text-inherit text-center"
           style={{ fontFamily: "'PP Mori', sans-serif" }}
         >
-          We partner with serious scaleups <br className="hidden md:block" /> <span className="italic font-normal" style={{ fontFamily: "'Nib Pro', serif" }}>in Europe and the Americas</span>
+          {headingBold} <br className="hidden md:block" /> <span className="italic font-normal" style={{ fontFamily: "'Nib Pro', serif" }}>{headingItalic}</span>
         </h2>
       </Reveal>
 
@@ -58,7 +65,7 @@ export default function Works() {
 
       <div className="mt-20 flex justify-center">
         <TransitionLink to="/work" className="px-8 py-4 rounded-full border border-current font-semibold hover:bg-[#020817] hover:text-[#fbf0f2] transition-colors inline-block text-[#020817]">
-          See more projects
+          {ctaText}
         </TransitionLink>
       </div>
     </div>

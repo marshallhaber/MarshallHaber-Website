@@ -29,7 +29,7 @@ router.post("/upload-image", adminAuth, upload.single("image"), async (req, res)
     const result = await uploadToImageKit(
       req.file.buffer,
       req.file.originalname,
-      "/marshallhaber/images"
+      "/marshall-admin/images"
     );
     res.json({ url: result.url });
   } catch (err) {
@@ -42,7 +42,7 @@ router.post("/upload-video", adminAuth, upload.single("video"), async (req, res)
     const result = await uploadToImageKit(
       req.file.buffer,
       req.file.originalname,
-      "/marshallhaber/videos"
+      "/marshall-admin/videos"
     );
     res.json({ url: result.url });
   } catch (err) {

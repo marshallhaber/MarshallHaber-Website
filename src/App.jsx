@@ -1,6 +1,5 @@
-import { useEffect, useLayoutEffect } from "react";
+import { useLayoutEffect } from "react";
 import { HashRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import Lenis from "@studio-freight/lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { NavigationProvider } from "./context/NavigationContext";
@@ -58,37 +57,7 @@ function PageRoutes() {
   );
 }
 
-function useLenisSmoothScroll() {
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const lenis = new Lenis({
-      lerp: 0.09,
-      duration: 1.15,
-      smoothWheel: true,
-      // Subtle bounce-style ease — overshoots ~3% near the end before settling.
-      easing: (t) => 1 - Math.pow(1 - t, 3) + 0.03 * Math.sin(t * Math.PI),
-    });
-
-    let rafId;
-    function raf(time) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
-    rafId = requestAnimationFrame(raf);
-
-    lenis.on("scroll", ScrollTrigger.update);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      lenis.destroy();
-    };
-  }, []);
-}
-
 function SiteShell() {
-  useLenisSmoothScroll();
   return (
     <NavigationProvider>
       <RouteChangeHandler />

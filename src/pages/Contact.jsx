@@ -2,6 +2,9 @@ import { useState, useRef, useLayoutEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import heroVideo from '../assets/video.mp4';
 import styles from './Contact.module.css';
+import { usePageContent } from '../hooks/usePageContent';
+import { getContent } from '../lib/content';
+import { defaults } from '../lib/contentDefaults';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -33,6 +36,11 @@ export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
   const [focused, setFocused] = useState(null);
 
+  const { sections } = usePageContent("contact");
+  const hero = getContent(sections, "hero", defaults.contact.hero);
+  const info = getContent(sections, "info", defaults.contact.info);
+  const form = getContent(sections, "form", defaults.contact.form);
+
   useLayoutEffect(() => {
     document.body.style.backgroundColor = '#fbf0f2';
     return () => {
@@ -57,17 +65,17 @@ export default function Contact() {
       <section className={styles.hero}>
         <div className={styles.heroContent}>
           <AnimatedSection>
-            <span className={styles.heroLabel}>Contact</span>
+            <span className={styles.heroLabel}>{hero.label}</span>
           </AnimatedSection>
           <AnimatedSection delay={1}>
             <h1 className={styles.heroTitle}>
-              Let's create<br />something great
+              {hero.title.split("\n").map((line, i, arr) => (
+                <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+              ))}
             </h1>
           </AnimatedSection>
           <AnimatedSection delay={2}>
-            <p className={styles.heroSubtitle}>
-              We'd love to hear about your next project
-            </p>
+            <p className={styles.heroSubtitle}>{hero.subtitle}</p>
           </AnimatedSection>
         </div>
 
@@ -96,12 +104,12 @@ export default function Contact() {
               <circle cx="12" cy="10" r="3"/>
             </svg>
           </div>
-          <h3 className={styles.infoCardTitle}>Visit Us</h3>
+          <h3 className={styles.infoCardTitle}>{info.location.title}</h3>
           <p className={styles.infoCardText}>
-            99 Wall Street +1467<br />
-            New York, NY 10005
+            {info.location.addressLine1}<br />
+            {info.location.addressLine2}
           </p>
-          <p className={styles.infoCardMuted}>New York · Toronto · Florida</p>
+          <p className={styles.infoCardMuted}>{info.location.regions}</p>
         </AnimatedSection>
 
         <AnimatedSection delay={1} className={styles.infoCard}>
@@ -110,11 +118,11 @@ export default function Contact() {
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
             </svg>
           </div>
-          <h3 className={styles.infoCardTitle}>Call Us</h3>
+          <h3 className={styles.infoCardTitle}>{info.phone.title}</h3>
           <p className={styles.infoCardText}>
-            <a href="tel:+12124949052">+1 (212) 494-9052</a>
+            <a href={`tel:${info.phone.number.replace(/[^+\d]/g, '')}`}>{info.phone.number}</a>
           </p>
-          <p className={styles.infoCardMuted}>Mon - Fri, 9am - 6pm EST</p>
+          <p className={styles.infoCardMuted}>{info.phone.hours}</p>
         </AnimatedSection>
 
         <AnimatedSection delay={2} className={styles.infoCard}>
@@ -124,11 +132,11 @@ export default function Contact() {
               <polyline points="22,6 12,13 2,6"/>
             </svg>
           </div>
-          <h3 className={styles.infoCardTitle}>Email Us</h3>
+          <h3 className={styles.infoCardTitle}>{info.email.title}</h3>
           <p className={styles.infoCardText}>
-            <a href="mailto:newbiz@marshallhaber.com">newbiz@marshallhaber.com</a>
+            <a href={`mailto:${info.email.address}`}>{info.email.address}</a>
           </p>
-          <p className={styles.infoCardMuted}>We'll respond within 24 hours</p>
+          <p className={styles.infoCardMuted}>{info.email.response}</p>
         </AnimatedSection>
       </section>
 
@@ -136,13 +144,13 @@ export default function Contact() {
       <section className={styles.formWrapper}>
         <div className={styles.formContainer}>
           <AnimatedSection className={styles.formLeft}>
-            <span className={styles.formLabel}>Get in touch</span>
+            <span className={styles.formLabel}>{form.label}</span>
             <h2 className={styles.formTitle}>
-              Want to work<br />with us?
+              {form.title.split("\n").map((line, i, arr) => (
+                <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+              ))}
             </h2>
-            <p className={styles.formSubtext}>
-              Let us know a bit about you and your business idea, challenge, or needs. We'll get back to you within one business day.
-            </p>
+            <p className={styles.formSubtext}>{form.subtitle}</p>
           </AnimatedSection>
 
           <AnimatedSection delay={1} className={styles.formRight}>
@@ -159,17 +167,17 @@ export default function Contact() {
                     <polyline points="22 4 12 14.01 9 11.01"/>
                   </svg>
                 </div>
-                <h3>Thank you!</h3>
-                <p>We've received your message and will be in touch shortly.</p>
+                <h3>{form.successTitle}</h3>
+                <p>{form.successMessage}</p>
               </motion.div>
             ) : (
               <form className={styles.form} onSubmit={handleSubmit}>
                 <div className={styles.formRow}>
                   <div className={`${styles.inputGroup} ${focused === 'name' ? styles.focused : ''}`}>
-                    <label htmlFor="contact-name">Name</label>
+                    <label htmlFor="contact-name">{form.nameLabel}</label>
                     <input
                       type="text"
-                      placeholder="Your full name"
+                      placeholder={form.namePlaceholder}
                       className={styles.input}
                       required
                       id="contact-name"
@@ -178,10 +186,10 @@ export default function Contact() {
                     />
                   </div>
                   <div className={`${styles.inputGroup} ${focused === 'email' ? styles.focused : ''}`}>
-                    <label htmlFor="contact-email">Email</label>
+                    <label htmlFor="contact-email">{form.emailLabel}</label>
                     <input
                       type="email"
-                      placeholder="your@email.com"
+                      placeholder={form.emailPlaceholder}
                       className={styles.input}
                       required
                       id="contact-email"
@@ -192,10 +200,10 @@ export default function Contact() {
                 </div>
 
                 <div className={`${styles.inputGroup} ${focused === 'company' ? styles.focused : ''}`}>
-                  <label htmlFor="contact-company">Company</label>
+                  <label htmlFor="contact-company">{form.companyLabel}</label>
                   <input
                     type="text"
-                    placeholder="Your company name"
+                    placeholder={form.companyPlaceholder}
                     className={styles.input}
                     id="contact-company"
                     onFocus={() => setFocused('company')}
@@ -204,9 +212,9 @@ export default function Contact() {
                 </div>
 
                 <div className={`${styles.inputGroup} ${focused === 'message' ? styles.focused : ''}`}>
-                  <label htmlFor="contact-message">Message</label>
+                  <label htmlFor="contact-message">{form.messageLabel}</label>
                   <textarea
-                    placeholder="Tell us about your project..."
+                    placeholder={form.messagePlaceholder}
                     className={styles.textarea}
                     rows="5"
                     required
@@ -223,12 +231,12 @@ export default function Contact() {
                     id="subscribe-checkbox"
                   />
                   <label htmlFor="subscribe-checkbox" className={styles.checkboxLabel}>
-                    Send me occasional updates on events, insights, and services
+                    {form.checkboxLabel}
                   </label>
                 </div>
 
                 <button type="submit" className={styles.submitBtn} id="contact-submit">
-                  <span>Send Message</span>
+                  <span>{form.submitText}</span>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="5" y1="12" x2="19" y2="12"/>
                     <polyline points="12 5 19 12 12 19"/>

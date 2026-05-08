@@ -3,36 +3,17 @@ import { useState, useEffect } from "react";
 import AnimatedCounter from "../ui/AnimatedCounter";
 import Reveal from "../ui/Reveal";
 import TransitionLink from "../ui/TransitionLink";
-
-const facts = [
-  {
-    value: "20+",
-    isText: true,
-    label: "years building brands, platforms, and experiences that actually ship",
-  },
-  {
-    value: "$100M+",
-    isText: true,
-    label: "in projects, developments, and ventures supported through our work",
-  },
-  {
-    value: "3 markets",
-    isText: true,
-    label: "New York • Toronto • Florida — operating across borders and industries",
-  },
-  {
-    value: "0 layers",
-    isText: true,
-    label: "you work directly with senior leadership — always",
-  },
-  {
-    value: "Weeks,\nnot months",
-    isText: true,
-    label: "from strategy to execution",
-  },
-];
+import { usePageContent } from "../../hooks/usePageContent";
+import { getContent } from "../../lib/content";
+import { defaults } from "../../lib/contentDefaults";
 
 export default function About() {
+  const { sections } = usePageContent("home");
+  const heading = getContent(sections, "about.heading", defaults.home.about.heading);
+  const buttonText = getContent(sections, "about.buttonText", defaults.home.about.buttonText);
+  const keyFactsLabel = getContent(sections, "about.keyFactsLabel", defaults.home.about.keyFactsLabel);
+  const facts = getContent(sections, "about.facts", defaults.home.about.facts);
+
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -45,7 +26,7 @@ export default function About() {
   const prev = () => setCurrent((p) => (p - 1 + facts.length) % facts.length);
   const next = () => setCurrent((p) => (p + 1) % facts.length);
 
-  const fact = facts[current];
+  const fact = facts[current] || { value: "", label: "" };
 
   return (
     // ✅ FULL PAGE BACKGROUND FIX

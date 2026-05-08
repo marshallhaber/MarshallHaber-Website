@@ -1,14 +1,44 @@
-import { useState, useLayoutEffect } from 'react';
+import { useState, useLayoutEffect, useMemo } from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import TransitionLink from '../components/ui/TransitionLink';
 import ContactModal from '../components/ui/ContactModal';
-import projects from '../data/projects';
+import hardcodedProjects from '../data/projects';
 import styles from './WorkDetail.module.css';
+import { usePageContent } from '../hooks/usePageContent';
+import { getContent } from '../lib/content';
+import { defaults } from '../lib/contentDefaults';
 
 export default function WorkDetail() {
   const { slug } = useParams();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  const { sections } = usePageContent("workDetail");
+  const { sections: workSections, loading: workLoading } = usePageContent("work");
+  const info = getContent(sections, "info", defaults.workDetail.info);
+  const moreProjectsHeading = getContent(sections, "moreProjectsHeading", defaults.workDetail.moreProjectsHeading);
+  const ctaSendRequest = getContent(sections, "cta.sendRequest", defaults.workDetail.cta.sendRequest);
+  const ctaMasterplan = getContent(sections, "cta.masterplan", defaults.workDetail.cta.masterplan);
+
+  const projects = useMemo(() => {
+    const cms = (workSections?.projects || [])
+      .filter((p) => p && p.title)
+      .map((p) => ({
+        slug: p.slug || p.title.toLowerCase().replace(/\s+/g, '-'),
+        title: p.title,
+        subtitle: p.subtitle || '',
+        category: p.category || 'Uncategorized',
+        client: p.client || p.title,
+        description: p.description || '',
+        image: p.imageUrl || '',
+        video: p.videoUrl || '',
+        fromCms: true,
+      }));
+    const hardcodedSlugs = new Set(hardcodedProjects.map((p) => p.slug));
+    const newCms = cms.filter((p) => !hardcodedSlugs.has(p.slug));
+    return [...hardcodedProjects, ...newCms];
+  }, [workSections]);
+
   const project = projects.find((p) => p.slug === slug);
 
   useLayoutEffect(() => {
@@ -20,7 +50,12 @@ export default function WorkDetail() {
     };
   }, []);
 
-  if (!project) return <Navigate to="/work" replace />;
+  // Wait for the CMS projects fetch before deciding the slug is invalid —
+  // otherwise a CMS-created project would briefly redirect to /work.
+  if (!project) {
+    if (workLoading) return null;
+    return <Navigate to="/work" replace />;
+  }
 
   const moreProjects = projects.filter(p => p.slug !== slug).slice(0, 3);
 
@@ -72,7 +107,7 @@ export default function WorkDetail() {
             transition={{ duration: 0.7, delay: 0.2 }}
           >
             <div className={styles.infoDivider} />
-            <h3 className={styles.infoLabel}>Client</h3>
+            <h3 className={styles.infoLabel}>{info.clientLabel}</h3>
             <p className={styles.infoValue}>{project.client}</p>
           </motion.div>
 
@@ -83,7 +118,7 @@ export default function WorkDetail() {
             transition={{ duration: 0.7, delay: 0.25 }}
           >
             <div className={styles.infoDivider} />
-            <h3 className={styles.infoLabel}>Industry</h3>
+            <h3 className={styles.infoLabel}>{info.industryLabel}</h3>
             <p className={styles.infoValue}>{project.category}</p>
           </motion.div>
 
@@ -94,8 +129,8 @@ export default function WorkDetail() {
             transition={{ duration: 0.7, delay: 0.3 }}
           >
             <div className={styles.infoDivider} />
-            <h3 className={styles.infoLabel}>Services</h3>
-            <p className={styles.infoValue}>Strategy · Brand Identity · Website</p>
+            <h3 className={styles.infoLabel}>{info.servicesLabel}</h3>
+            <p className={styles.infoValue}>{info.servicesValue}</p>
           </motion.div>
         </section>
 
@@ -124,7 +159,7 @@ export default function WorkDetail() {
       {/* More Projects Section */}
       <section className={styles.moreProjects}>
         <div className={styles.container} style={{ padding: 0 }}>
-          <h2 className={styles.moreProjectsHeader}>More projects</h2>
+          <h2 className={styles.moreProjectsHeader}>{moreProjectsHeading}</h2>
           <div className={styles.moreProjectsGrid}>
             {moreProjects.map((p, i) => (
               <TransitionLink to={`/work/${p.slug}`} key={p.slug} className={styles.projectCard}>
@@ -155,16 +190,16 @@ export default function WorkDetail() {
           style={{ border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}
         >
           <div className={styles.ctaTextTop}>
-            <strong>You feel it too?</strong>
-            <span>Let's talk, no strings attached</span>
+            <strong>{ctaSendRequest.topBold}</strong>
+            <span>{ctaSendRequest.topItalic}</span>
           </div>
-          <h2 className={styles.ctaHeading}>Send Request</h2>
+          <h2 className={styles.ctaHeading}>{ctaSendRequest.heading}</h2>
         </button>
 
         <TransitionLink to="/services" className={styles.ctaBlockPink}>
           <div className={styles.ctaTextTop}>
-            <strong>Our free offer for B2B tech scaleups!</strong>
-            <span>We identify high-impact messaging and brand fixes you can implement within 24 hours.</span>
+            <strong>{ctaMasterplan.topBold}</strong>
+            <span>{ctaMasterplan.topItalic}</span>
           </div>
           <div className={styles.ctaHeadingContainer}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '8px' }}>
@@ -172,8 +207,10 @@ export default function WorkDetail() {
               <polyline points="15 10 19 14 15 18"></polyline>
             </svg>
             <div className={styles.ctaHeadingPinkGroup}>
-              <h2 className={styles.ctaHeading}>Brand</h2>
-              <h2 className={styles.ctaHeadingUnderlined}>Masterplan</h2>
+              {ctaMasterplan.heading.split(/\s+/).slice(0, -1).join(" ") && (
+                <h2 className={styles.ctaHeading}>{ctaMasterplan.heading.split(/\s+/).slice(0, -1).join(" ")}</h2>
+              )}
+              <h2 className={styles.ctaHeadingUnderlined}>{ctaMasterplan.heading.split(/\s+/).slice(-1)[0]}</h2>
             </div>
           </div>
         </TransitionLink>

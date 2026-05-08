@@ -1,31 +1,9 @@
 import { motion } from "framer-motion";
 import { useRef } from "react";
 import Reveal from "../ui/Reveal";
-
-const cards = [
-  {
-    bg: "#f7c4d5", // Pink
-    brand: "Marshall Haber",
-    label: "The Heart of the Shift:",
-    title: "Brand Messaging is the\nSoul of Rebranding",
-    desc: "The Heart of the Shift: Brand Messaging Is the Soul of Rebranding",
-  },
-  {
-    bg: "#2B59C3", // Blue
-    brand: "Marshall Haber",
-    label: "Research Is Our Love Language:",
-    labelColor: "#fbf0f2",
-    title: "The Art of\nGathering Insights",
-    desc: "Research Is Our Love Language: The Art of Gathering Insights",
-  },
-  {
-    bg: "#0B0215", // Night
-    brand: "Marshall Haber",
-    label: "The Founders' Guide to Rebranding",
-    titleLarge: "...is it time?",
-    desc: "The Founders' Guide to Rebranding",
-  },
-];
+import { usePageContent } from "../../hooks/usePageContent";
+import { getContent } from "../../lib/content";
+import { defaults } from "../../lib/contentDefaults";
 
 const cardInitial = [
   { opacity: 0, x: -150 },
@@ -35,6 +13,10 @@ const cardInitial = [
 
 export default function Insights() {
   const sectionRef = useRef(null);
+  const { sections } = usePageContent("home");
+  const heading = getContent(sections, "insights.heading", defaults.home.insights.heading);
+  const trendingButton = getContent(sections, "insights.trendingButton", defaults.home.insights.trendingButton);
+  const cards = getContent(sections, "insights.cards", defaults.home.insights.cards);
 
   // Section has a static cream bg; all text/borders stay dark for readability.
   const textColor = "#020817";
@@ -58,7 +40,7 @@ export default function Insights() {
               style={{ color: textColor, fontFamily: "'PP Mori', sans-serif", fontSize: "clamp(2rem, 6vw, 4.5rem)" }}
               className="font-bold leading-[1.0] tracking-tight"
             >
-              Latest insights for scaleup teams
+              {heading}
             </motion.h2>
           </Reveal>
 
@@ -73,7 +55,7 @@ export default function Insights() {
               style={{ borderColor: buttonBorder, color: buttonBorder, backgroundColor: "transparent" }}
               className="flex items-center gap-2 px-4 py-1.5 border-[0.5px] border-opacity-30 rounded-full text-[11px] font-bold uppercase tracking-wider whitespace-nowrap"
             >
-              What's trending.
+              {trendingButton}
             </motion.button>
             <motion.div
               style={{ borderColor: buttonBorder, color: buttonBorder }}
@@ -97,7 +79,7 @@ export default function Insights() {
             {cards.map((card, i) => (
               <motion.div
                 key={i}
-                initial={cardInitial[i]}
+                initial={cardInitial[i % cardInitial.length]}
                 whileInView={{ opacity: 1, x: 0, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{

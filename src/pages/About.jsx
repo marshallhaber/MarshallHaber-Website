@@ -3,6 +3,9 @@ import { motion } from 'framer-motion';
 import TransitionLink from '../components/ui/TransitionLink';
 import ContactModal from '../components/ui/ContactModal';
 import styles from './About.module.css';
+import { usePageContent } from '../hooks/usePageContent';
+import { getContent } from '../lib/content';
+import { defaults } from '../lib/contentDefaults';
 
 const randomImages = [
   "https://picsum.photos/id/1015/500/400",
@@ -21,6 +24,14 @@ export default function About() {
   const lastPos = useRef({ x: 0, y: 0 });
   const count = useRef(0);
   const sectionRef = useRef(null);
+
+  const { sections } = usePageContent("about");
+  const estHeading = getContent(sections, "hero.estHeading", defaults.about.hero.estHeading);
+  const taglineBold = getContent(sections, "hero.taglineBold", defaults.about.hero.taglineBold);
+  const taglineItalic = getContent(sections, "hero.taglineItalic", defaults.about.hero.taglineItalic);
+  const paragraphs = getContent(sections, "paragraphs", defaults.about.paragraphs);
+  const ctaSendRequest = getContent(sections, "cta.sendRequest", defaults.about.cta.sendRequest);
+  const ctaMasterplan = getContent(sections, "cta.masterplan", defaults.about.cta.masterplan);
 
   useEffect(() => {
     document.body.style.backgroundColor = '#fbf0f2';
@@ -73,11 +84,11 @@ export default function About() {
       {/* Est. 2015 Hero */}
       <section className={styles.estSection}>
         <h1 className={styles.estHeading}>
-          Est. 2005
+          {estHeading}
         </h1>
         <div className={styles.tagline}>
-          <p className={styles.taglineBold}>Crafting the future,</p>
-          <p className={styles.taglineItalic}>while having serious fun.</p>
+          <p className={styles.taglineBold}>{taglineBold}</p>
+          <p className={styles.taglineItalic}>{taglineItalic}</p>
         </div>
       </section>
 
@@ -102,15 +113,15 @@ export default function About() {
         ))}
 
         <div className={styles.textContent}>
-          <p className={styles.mainParagraph}>
-            <strong>MARSHALL.HABER</strong> <span>started in 2005 as a</span> <strong>passion project</strong> <span>at Hyper Island, Stockholm by a diverse group of creatives with the goal of re-defining what a serious business is really about:</span> <strong>kindness and creativity.</strong>
-          </p>
-          <p className={styles.mainParagraph} style={{ marginTop: '2rem' }}>
-            <span>That's why we craft our future with kindness to</span> <strong>create brands that make people smile.</strong>
-          </p>
-          <p className={styles.mainParagraph} style={{ marginTop: '2rem' }}>
-            <span>Today our</span> <strong>dream team</strong> <span>of 15 creatives with a global perspective has crafted a new generation of brands with</span> <strong>over 180 change-making scaleups</strong> <span>in Europe and the Americas, a living proof that it is culture that drives a serious business.</span>
-          </p>
+          {paragraphs.map((p, i) => (
+            <p
+              key={i}
+              className={styles.mainParagraph}
+              style={i > 0 ? { marginTop: '2rem' } : undefined}
+            >
+              {typeof p === 'string' ? p : p.text}
+            </p>
+          ))}
         </div>
       </section>
 
@@ -121,10 +132,10 @@ export default function About() {
           style={{ border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}
         >
           <div className={styles.ctaTextTop}>
-            <strong>You feel it too?</strong>
-            <span>Let's talk, no strings attached</span>
+            <strong>{ctaSendRequest.topBold}</strong>
+            <span>{ctaSendRequest.topItalic}</span>
           </div>
-          <h2 className={styles.ctaHeading}>Send Request</h2>
+          <h2 className={styles.ctaHeading}>{ctaSendRequest.heading}</h2>
         </button>
 
         <button
@@ -133,8 +144,8 @@ export default function About() {
           style={{ border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', width: '100%' }}
         >
           <div className={styles.ctaTextTop}>
-            <strong>Our free offer for B2B tech scaleups!</strong>
-            <span>We identify high-impact messaging and brand fixes you can implement within 24 hours.</span>
+            <strong>{ctaMasterplan.topBold}</strong>
+            <span>{ctaMasterplan.topItalic}</span>
           </div>
           <div className={styles.ctaHeadingContainer}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '8px' }}>
@@ -142,8 +153,10 @@ export default function About() {
               <polyline points="15 10 19 14 15 18"></polyline>
             </svg>
             <div className={styles.ctaHeadingPinkGroup}>
-              <h2 className={styles.ctaHeading}>Brand</h2>
-              <h2 className={styles.ctaHeadingUnderlined}>Masterplan</h2>
+              {ctaMasterplan.heading.split(/\s+/).slice(0, -1).join(" ") && (
+                <h2 className={styles.ctaHeading}>{ctaMasterplan.heading.split(/\s+/).slice(0, -1).join(" ")}</h2>
+              )}
+              <h2 className={styles.ctaHeadingUnderlined}>{ctaMasterplan.heading.split(/\s+/).slice(-1)[0]}</h2>
             </div>
           </div>
         </button>

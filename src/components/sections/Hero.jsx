@@ -3,6 +3,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SmileLogo from "../ui/SmileLogo";
 import videoSrc from "../../assets/video.mp4";
+import { usePageContent } from "../../hooks/usePageContent";
+import { getContent } from "../../lib/content";
+import { defaults } from "../../lib/contentDefaults";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,6 +18,10 @@ export default function Hero() {
   const videoWrapperRef = useRef(null);
   const textRef = useRef(null);
   const logoRef = useRef(null);
+
+  const { sections } = usePageContent("home");
+  const headingBold = getContent(sections, "hero.headingBold", defaults.home.hero.headingBold);
+  const headingItalic = getContent(sections, "hero.headingItalic", defaults.home.hero.headingItalic);
 
   // useLayoutEffect ensures cleanup (ctx.revert) runs BEFORE React removes
   // the DOM nodes, so GSAP can properly un-pin and remove the pin spacer.
@@ -86,8 +93,8 @@ export default function Hero() {
         className="absolute top-[45vh] md:top-[35vh] w-full flex justify-center z-20 pointer-events-none px-6"
       >
         <h2 className="text-[24px] sm:text-[32px] md:text-[40px] lg:text-[50px] leading-[1.1] text-[#fbf0f2] text-center tracking-tight max-w-[900px]">
-          <span className="font-bold" style={{ fontFamily: "'PP Mori', sans-serif" }}>Premium Branding Agency</span> <br className="hidden sm:block" />
-          <span style={{ fontFamily: "'Nib Pro', serif", fontWeight: 400 }}>for B2B Tech Scaleups</span>
+          <span className="font-bold" style={{ fontFamily: "'PP Mori', sans-serif" }}>{headingBold}</span> <br className="hidden sm:block" />
+          <span style={{ fontFamily: "'Nib Pro', serif", fontWeight: 400 }}>{headingItalic}</span>
         </h2>
       </div>
 

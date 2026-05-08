@@ -2,28 +2,9 @@ import { useRef, useState, useLayoutEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import TransitionLink from '../components/ui/TransitionLink';
 import styles from './Clients.module.css';
-
-/* ─── Client data mapping ─── */
-const clients = [
-    { name: 'JPMorgan Chase', logo: 'jpmorgan.png', category: 'Finance' },
-    { name: 'Berkshire Hathaway', logo: 'berkshire-hathaway-logonew.png', category: 'Finance' },
-    { name: 'Jeffries', logo: '09_Jeffries_Logo.png', category: 'Finance' },
-    { name: 'Special Olympics', logo: '1200px-Special_Olympics_logo.svg_-1.png', category: 'Nonprofit' },
-    { name: 'Eurotech', logo: '16_Eurotech_Logo.png', category: 'Technology' },
-    { name: 'Signature Bank', logo: '23_Signature_Bank.png', category: 'Finance' },
-    { name: 'Burson Marsteller', logo: 'Burson-Marsteller-logo_250px.png', category: 'Communications' },
-    { name: 'Celadon', logo: 'Celadon_Logo.png', category: 'Technology' },
-    { name: 'Humankind Investments', logo: 'HumankindInvestments_Logo.png', category: 'Finance' },
-    { name: 'MIZ', logo: 'MIZ_Logo_SVG_Gadrientdark.png', category: 'Technology' },
-    { name: 'Y&R', logo: 'YR.png', category: 'Advertising' },
-    { name: 'Centerbridge', logo: 'centerbridge.png', category: 'Finance' },
-    { name: 'Kaplan', logo: 'kaplan.png', category: 'Education' },
-    { name: 'Rivington', logo: 'rivington.png', category: 'Finance' },
-    { name: 'Trish McEvoy', logo: 'trishmcevoy-1.png', category: 'Beauty' },
-    { name: 'Usher', logo: 'usher-new-logo_white.png', category: 'Entertainment' },
-];
-
-const categories = ['All', ...Array.from(new Set(clients.map(c => c.category)))];
+import { usePageContent } from '../hooks/usePageContent';
+import { getContent } from '../lib/content';
+import { defaults } from '../lib/contentDefaults';
 
 /* ─── Fade-in wrapper ─── */
 function FadeIn({ children, delay = 0, className }) {
@@ -53,6 +34,18 @@ export default function Clients() {
         };
     }, []);
 
+    const { sections } = usePageContent("clients");
+    const heroLabel = getContent(sections, "hero.label", defaults.clients.hero.label);
+    const heroHeading = getContent(sections, "hero.heading", defaults.clients.hero.heading);
+    const heroSubtitle = getContent(sections, "hero.subtitle", defaults.clients.hero.subtitle);
+    const gridHeading = getContent(sections, "grid.heading", defaults.clients.grid.heading);
+    const gridSubtext = getContent(sections, "grid.subtext", defaults.clients.grid.subtext);
+    const clients = getContent(sections, "list", defaults.clients.list);
+    const ctaHeading = getContent(sections, "cta.heading", defaults.clients.cta.heading);
+    const ctaButtonText = getContent(sections, "cta.buttonText", defaults.clients.cta.buttonText);
+
+    const categories = ['All', ...Array.from(new Set(clients.map(c => c.category)))];
+
     const [activeFilter, setActiveFilter] = useState('All');
 
     const filtered = activeFilter === 'All'
@@ -75,7 +68,7 @@ export default function Clients() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.6 }}
                 >
-                    Our Partners
+                    {heroLabel}
                 </motion.p>
                 <motion.h1
                     className={styles.heroHeading}
@@ -83,7 +76,9 @@ export default function Clients() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                 >
-                    Credibility has an impact<br />in numbers
+                    {heroHeading.split("\n").map((line, i, arr) => (
+                        <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                    ))}
                 </motion.h1>
                 <motion.p
                     className={styles.heroSub}
@@ -91,7 +86,7 @@ export default function Clients() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.7 }}
                 >
-                    Bookings in Europe and the Americas partner with us for our expertise in Brand Strategy, Identity, Marketing &amp; Product.
+                    {heroSubtitle}
                 </motion.p>
             </section>
 
@@ -110,10 +105,8 @@ export default function Clients() {
 
             {/* Logo grid */}
             <section className={styles.gridSection}>
-                <p className={styles.gridHeading}>Trusted by industry leaders</p>
-                <p className={styles.gridSubtext}>
-                    Bookings in Europe and the Americas partner with us for our expertise in Brand Strategy, Identity, Marketing &amp; Product.
-                </p>
+                <p className={styles.gridHeading}>{gridHeading}</p>
+                <p className={styles.gridSubtext}>{gridSubtext}</p>
                 <motion.div className={styles.logoGrid} layout>
                     {filtered.map((client, i) => {
                         return (
@@ -136,9 +129,9 @@ export default function Clients() {
             {/* CTA */}
             <section className={styles.cta}>
                 <FadeIn>
-                    <h2 className={styles.ctaHeading}>Want to join our client roster?</h2>
+                    <h2 className={styles.ctaHeading}>{ctaHeading}</h2>
                     <TransitionLink to="/contact" className={styles.ctaButton}>
-                        Get in Touch
+                        {ctaButtonText}
                     </TransitionLink>
                 </FadeIn>
             </section>

@@ -1,8 +1,14 @@
 import { useState } from "react";
 import ContactModal from "../ui/ContactModal";
+import { usePageContent } from "../../hooks/usePageContent";
+import { getContent } from "../../lib/content";
+import { defaults } from "../../lib/contentDefaults";
 
 export default function CTA() {
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const { sections } = usePageContent("home");
+  const left = getContent(sections, "cta.left", defaults.home.cta.left);
+  const right = getContent(sections, "cta.right", defaults.home.cta.right);
 
   return (
     <section className="w-full px-6 pt-20 pb-20 bg-[#020817] text-[#fbf0f2]">
@@ -16,11 +22,11 @@ export default function CTA() {
           style={{ fontFamily: "inherit" }}
         >
           <div className="text-lg md:text-xl leading-tight">
-            <p className="font-bold not-italic" style={{ fontFamily: "'PP Mori', sans-serif" }}>You feel it too?</p>
-            <p className="italic" style={{ fontFamily: "'Nib Pro', serif" }}>Let's talk, no strings attached</p>
+            <p className="font-bold not-italic" style={{ fontFamily: "'PP Mori', sans-serif" }}>{left.topBold}</p>
+            <p className="italic" style={{ fontFamily: "'Nib Pro', serif" }}>{left.topItalic}</p>
           </div>
           <h2 className="text-[10vw] md:text-[64px] font-bold tracking-tight leading-none group-hover:pl-2 transition-all duration-300" style={{ fontFamily: "'PP Mori', sans-serif" }}>
-            Send Request
+            {left.heading}
           </h2>
         </button>
 
@@ -32,11 +38,11 @@ export default function CTA() {
           style={{ fontFamily: "inherit" }}
         >
           <div className="text-base md:text-lg leading-snug max-w-sm">
-            <p className="font-bold not-italic" style={{ fontFamily: "'PP Mori', sans-serif" }}>Our free offer for B2B tech scaleups!</p>
-            <p className="italic" style={{ fontFamily: "'Nib Pro', serif" }}>We identify high-impact messaging and brand fixes you can implement within 24 hours.</p>
+            <p className="font-bold not-italic" style={{ fontFamily: "'PP Mori', sans-serif" }}>{right.topBold}</p>
+            <p className="italic" style={{ fontFamily: "'Nib Pro', serif" }}>{right.topItalic}</p>
           </div>
           <h2 className="text-[10vw] md:text-[64px] font-bold tracking-tight leading-none group-hover:pl-2 transition-all duration-300" style={{ fontFamily: "'PP Mori', sans-serif" }}>
-            Brand <br className="hidden md:block" /> Masterplan
+            {right.heading}
           </h2>
         </button>
       </div>

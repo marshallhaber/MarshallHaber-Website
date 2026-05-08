@@ -6,26 +6,31 @@ const KEY = "234583419264838";
 const headers = { "x-admin-key": KEY };
 const jsonHeaders = { "x-admin-key": KEY, "Content-Type": "application/json" };
 
+const ICON = {
+  home: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>,
+  work: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" /></svg>,
+  about: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></svg>,
+  clients: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg>,
+  services: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></svg>,
+  contact: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>,
+  legal: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>,
+  global: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>,
+  workDetail: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 12h6M9 8h6M9 16h4" /></svg>,
+  comingSoon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
+};
+
 // ─── Page definitions: what sections each page has ───
 const PAGE_CONFIG = {
   home: {
     label: "Home",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-        <polyline points="9 22 9 12 15 12 15 22" />
-      </svg>
-    ),
+    icon: ICON.home,
     sections: [
       {
         key: "hero",
         title: "Hero Section",
         fields: [
-          { name: "heading", label: "Main Heading", type: "textarea" },
-          { name: "subheading", label: "Subheading", type: "textarea" },
-          { name: "videoUrl", label: "Hero Video", type: "video" },
-          { name: "logoImageUrl", label: "Logo Image", type: "image" },
-          { name: "bgColor", label: "Background Color", type: "color" },
+          { name: "headingBold", label: "Heading (bold line)", type: "textarea" },
+          { name: "headingItalic", label: "Heading (italic line)", type: "textarea" },
         ],
       },
       {
@@ -33,78 +38,94 @@ const PAGE_CONFIG = {
         title: "About Section",
         fields: [
           { name: "heading", label: "Heading", type: "textarea" },
-          { name: "description", label: "Description", type: "textarea" },
           { name: "buttonText", label: "Button Text", type: "text" },
-          { name: "imageUrl", label: "About Image", type: "image" },
+          { name: "keyFactsLabel", label: "Key Facts Label", type: "text" },
         ],
       },
       {
-        key: "aboutFacts",
-        title: "Key Facts",
+        key: "about.facts",
+        title: "About Key Facts",
         type: "list",
         fields: [
-          { name: "value", label: "Value", type: "text" },
-          { name: "label", label: "Description", type: "text" },
+          { name: "value", label: "Value (e.g. 20+)", type: "text" },
+          { name: "label", label: "Description", type: "textarea" },
+        ],
+      },
+      {
+        key: "works",
+        title: "Works Heading",
+        fields: [
+          { name: "headingBold", label: "Heading (bold line)", type: "textarea" },
+          { name: "headingItalic", label: "Heading (italic line)", type: "textarea" },
+          { name: "ctaText", label: "Button Text", type: "text" },
+        ],
+      },
+      {
+        key: "insights",
+        title: "Insights Heading",
+        fields: [
+          { name: "heading", label: "Heading", type: "textarea" },
+          { name: "trendingButton", label: "Trending Pill Text", type: "text" },
+        ],
+      },
+      {
+        key: "insights.cards",
+        title: "Insight Cards",
+        type: "list",
+        fields: [
+          { name: "bg", label: "Background Color", type: "color" },
+          { name: "brand", label: "Brand Name", type: "text" },
+          { name: "label", label: "Italic Label", type: "text" },
+          { name: "title", label: "Title (use \\n for line break)", type: "textarea" },
+          { name: "titleLarge", label: "Title (single large)", type: "text" },
+          { name: "desc", label: "Description (under card)", type: "textarea" },
         ],
       },
       {
         key: "servicePanels",
-        title: "Service Panels",
+        title: "Service Stack Panels",
         type: "list",
         fields: [
           { name: "title", label: "Title", type: "text" },
           { name: "description", label: "Description", type: "textarea" },
           { name: "items", label: "Items (comma-separated)", type: "text" },
-          { name: "bgColor", label: "Background Color", type: "color" },
-          { name: "imageUrl", label: "Panel Image", type: "image" },
-          { name: "videoUrl", label: "Panel Video", type: "video" },
+          { name: "bg", label: "Background Color", type: "color" },
+          { name: "textColor", label: "Text Color (Tailwind class)", type: "text" },
         ],
       },
       {
-        key: "works",
-        title: "Works Section",
+        key: "cta.left",
+        title: "CTA – Left Card",
         fields: [
-          { name: "heading", label: "Heading", type: "textarea" },
-          { name: "ctaText", label: "CTA Button Text", type: "text" },
-          { name: "imageUrl", label: "Section Image", type: "image" },
-        ],
-      },
-      {
-        key: "insightCards",
-        title: "Insight Cards",
-        type: "list",
-        fields: [
-          { name: "brand", label: "Brand Name", type: "text" },
-          { name: "label", label: "Label", type: "text" },
-          { name: "title", label: "Title", type: "text" },
-          { name: "description", label: "Description", type: "textarea" },
-          { name: "bgColor", label: "Background Color", type: "color" },
-          { name: "imageUrl", label: "Card Image", type: "image" },
-        ],
-      },
-      {
-        key: "cta",
-        title: "CTA Cards",
-        type: "list",
-        fields: [
-          { name: "topText", label: "Top Text", type: "textarea" },
+          { name: "topBold", label: "Top Bold Text", type: "text" },
+          { name: "topItalic", label: "Top Italic Text", type: "text" },
           { name: "heading", label: "Heading", type: "text" },
-          { name: "bgColor", label: "Background Color", type: "color" },
-          { name: "imageUrl", label: "Card Image", type: "image" },
-          { name: "linkUrl", label: "Link URL", type: "text" },
+        ],
+      },
+      {
+        key: "cta.right",
+        title: "CTA – Right Card",
+        fields: [
+          { name: "topBold", label: "Top Bold Text", type: "text" },
+          { name: "topItalic", label: "Top Italic Text", type: "textarea" },
+          { name: "heading", label: "Heading", type: "text" },
         ],
       },
     ],
   },
   work: {
     label: "Work",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="2" y="7" width="20" height="14" rx="2" />
-        <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
-      </svg>
-    ),
+    icon: ICON.work,
     sections: [
+      {
+        key: "tabs",
+        title: "Tab Labels",
+        fields: [
+          { name: "featured", label: "Featured Tab", type: "text" },
+          { name: "allProjects", label: "All Projects Tab", type: "text" },
+          { name: "industries", label: "Industries Tab", type: "text" },
+        ],
+      },
       {
         key: "projects",
         title: "Projects",
@@ -122,79 +143,115 @@ const PAGE_CONFIG = {
       },
     ],
   },
-  about: {
-    label: "About",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 16v-4M12 8h.01" />
-      </svg>
-    ),
+  workDetail: {
+    label: "Work Detail",
+    icon: ICON.workDetail,
     sections: [
       {
-        key: "intro",
-        title: "Intro Section",
+        key: "info",
+        title: "Info Block Labels",
         fields: [
-          { name: "paragraph", label: "Main Paragraph", type: "textarea" },
-          { name: "imageUrl", label: "About Image", type: "image" },
-          { name: "videoUrl", label: "About Video", type: "video" },
+          { name: "clientLabel", label: "Client Label", type: "text" },
+          { name: "industryLabel", label: "Industry Label", type: "text" },
+          { name: "servicesLabel", label: "Services Label", type: "text" },
+          { name: "servicesValue", label: "Services Value", type: "text" },
         ],
       },
       {
-        key: "ctaBlocks",
-        title: "CTA Blocks",
+        key: "cta.sendRequest",
+        title: "CTA – Send Request",
+        fields: [
+          { name: "topBold", label: "Top Bold", type: "text" },
+          { name: "topItalic", label: "Top Italic", type: "text" },
+          { name: "heading", label: "Heading", type: "text" },
+        ],
+      },
+      {
+        key: "cta.masterplan",
+        title: "CTA – Brand Masterplan",
+        fields: [
+          { name: "topBold", label: "Top Bold", type: "text" },
+          { name: "topItalic", label: "Top Italic", type: "textarea" },
+          { name: "heading", label: "Heading", type: "text" },
+        ],
+      },
+    ],
+  },
+  about: {
+    label: "About",
+    icon: ICON.about,
+    sections: [
+      {
+        key: "hero",
+        title: "Hero (Est. + Tagline)",
+        fields: [
+          { name: "estHeading", label: "Heading (e.g. Est. 2005)", type: "text" },
+          { name: "taglineBold", label: "Tagline Bold Line", type: "text" },
+          { name: "taglineItalic", label: "Tagline Italic Line", type: "text" },
+        ],
+      },
+      {
+        key: "paragraphs",
+        title: "Body Paragraphs",
         type: "list",
         fields: [
-          { name: "topText", label: "Top Text", type: "textarea" },
+          { name: "text", label: "Paragraph", type: "textarea" },
+        ],
+      },
+      {
+        key: "cta.sendRequest",
+        title: "CTA – Send Request",
+        fields: [
+          { name: "topBold", label: "Top Bold", type: "text" },
+          { name: "topItalic", label: "Top Italic", type: "text" },
           { name: "heading", label: "Heading", type: "text" },
-          { name: "bgColor", label: "Background Color", type: "color" },
+        ],
+      },
+      {
+        key: "cta.masterplan",
+        title: "CTA – Brand Masterplan",
+        fields: [
+          { name: "topBold", label: "Top Bold", type: "text" },
+          { name: "topItalic", label: "Top Italic", type: "textarea" },
+          { name: "heading", label: "Heading", type: "text" },
         ],
       },
     ],
   },
   clients: {
     label: "Clients",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
-      </svg>
-    ),
+    icon: ICON.clients,
     sections: [
       {
         key: "hero",
         title: "Hero Section",
         fields: [
-          { name: "label", label: "Label", type: "text" },
-          { name: "heading", label: "Heading", type: "textarea" },
-          { name: "subheading", label: "Subheading", type: "textarea" },
-          { name: "imageUrl", label: "Hero Image", type: "image" },
-          { name: "videoUrl", label: "Hero Video", type: "video" },
+          { name: "label", label: "Eyebrow Label", type: "text" },
+          { name: "heading", label: "Heading (use \\n for line break)", type: "textarea" },
+          { name: "subtitle", label: "Subtitle", type: "textarea" },
         ],
       },
       {
-        key: "stats",
-        title: "Stats",
-        type: "list",
+        key: "grid",
+        title: "Grid Heading",
         fields: [
-          { name: "value", label: "Value (e.g. 95%)", type: "text" },
-          { name: "label", label: "Description", type: "text" },
+          { name: "heading", label: "Heading", type: "text" },
+          { name: "subtext", label: "Subtext", type: "textarea" },
         ],
       },
       {
-        key: "clientList",
+        key: "list",
         title: "Client List",
         type: "list",
         fields: [
           { name: "name", label: "Client Name", type: "text" },
           { name: "category", label: "Category", type: "text" },
-          { name: "logoUrl", label: "Logo", type: "image" },
+          { name: "logo", label: "Logo Filename (in /CliendLogo)", type: "text" },
         ],
       },
       {
-        key: "ctaSection",
-        title: "CTA Section",
+        key: "cta",
+        title: "CTA",
         fields: [
           { name: "heading", label: "Heading", type: "text" },
           { name: "buttonText", label: "Button Text", type: "text" },
@@ -204,53 +261,210 @@ const PAGE_CONFIG = {
   },
   services: {
     label: "Services",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <polygon points="12 2 2 7 12 12 22 7 12 2" />
-        <polyline points="2 17 12 22 22 17" />
-        <polyline points="2 12 12 17 22 12" />
-      </svg>
-    ),
+    icon: ICON.services,
     sections: [
       {
         key: "hero",
         title: "Hero Section",
         fields: [
           { name: "heading", label: "Heading", type: "textarea" },
-          { name: "subheading", label: "Subheading", type: "textarea" },
-          { name: "videoUrl", label: "Hero Video", type: "video" },
-          { name: "imageUrl", label: "Hero Image", type: "image" },
-          { name: "bgColor", label: "Background Color", type: "color" },
         ],
       },
       {
         key: "sidebar",
         title: "Sidebar Info",
         fields: [
-          { name: "label", label: "Label", type: "text" },
-          { name: "text", label: "Text", type: "textarea" },
+          { name: "label", label: "Label (e.g. When?)", type: "text" },
+          { name: "text", label: "Body Text", type: "textarea" },
         ],
       },
       {
         key: "serviceCards",
-        title: "Service Cards",
+        title: "Offering Cards",
         type: "list",
         fields: [
+          { name: "id", label: "ID", type: "text" },
           { name: "title", label: "Title", type: "text" },
           { name: "text", label: "Description", type: "textarea" },
         ],
       },
       {
-        key: "brandingPanels",
-        title: "Branding Service Panels",
+        key: "programs",
+        title: "Programs Heading",
+        fields: [
+          { name: "heading", label: "Heading", type: "text" },
+        ],
+      },
+      {
+        key: "programs.services",
+        title: "Branding Services List",
         type: "list",
         fields: [
-          { name: "title", label: "Title", type: "text" },
-          { name: "description", label: "Description", type: "textarea" },
-          { name: "items", label: "Items (comma-separated)", type: "text" },
-          { name: "bgColor", label: "Background Color", type: "color" },
-          { name: "imageUrl", label: "Panel Image", type: "image" },
-          { name: "videoUrl", label: "Panel Video", type: "video" },
+          { name: "name", label: "Name", type: "text" },
+          { name: "tagline", label: "Tagline", type: "text" },
+        ],
+      },
+    ],
+  },
+  contact: {
+    label: "Contact",
+    icon: ICON.contact,
+    sections: [
+      {
+        key: "hero",
+        title: "Hero Section",
+        fields: [
+          { name: "label", label: "Eyebrow Label", type: "text" },
+          { name: "title", label: "Title (use \\n for line break)", type: "textarea" },
+          { name: "subtitle", label: "Subtitle", type: "textarea" },
+        ],
+      },
+      {
+        key: "info.location",
+        title: "Info – Visit Us",
+        fields: [
+          { name: "title", label: "Card Title", type: "text" },
+          { name: "addressLine1", label: "Address Line 1", type: "text" },
+          { name: "addressLine2", label: "Address Line 2", type: "text" },
+          { name: "regions", label: "Regions Caption", type: "text" },
+        ],
+      },
+      {
+        key: "info.phone",
+        title: "Info – Call Us",
+        fields: [
+          { name: "title", label: "Card Title", type: "text" },
+          { name: "number", label: "Phone Number", type: "text" },
+          { name: "hours", label: "Hours", type: "text" },
+        ],
+      },
+      {
+        key: "info.email",
+        title: "Info – Email Us",
+        fields: [
+          { name: "title", label: "Card Title", type: "text" },
+          { name: "address", label: "Email Address", type: "text" },
+          { name: "response", label: "Response Caption", type: "text" },
+        ],
+      },
+      {
+        key: "form",
+        title: "Form Copy",
+        fields: [
+          { name: "label", label: "Eyebrow Label", type: "text" },
+          { name: "title", label: "Title (use \\n for line break)", type: "textarea" },
+          { name: "subtitle", label: "Subtitle", type: "textarea" },
+          { name: "nameLabel", label: "Name Field Label", type: "text" },
+          { name: "namePlaceholder", label: "Name Placeholder", type: "text" },
+          { name: "emailLabel", label: "Email Field Label", type: "text" },
+          { name: "emailPlaceholder", label: "Email Placeholder", type: "text" },
+          { name: "companyLabel", label: "Company Field Label", type: "text" },
+          { name: "companyPlaceholder", label: "Company Placeholder", type: "text" },
+          { name: "messageLabel", label: "Message Field Label", type: "text" },
+          { name: "messagePlaceholder", label: "Message Placeholder", type: "text" },
+          { name: "checkboxLabel", label: "Checkbox Label", type: "textarea" },
+          { name: "submitText", label: "Submit Button", type: "text" },
+          { name: "successTitle", label: "Success Title", type: "text" },
+          { name: "successMessage", label: "Success Message", type: "textarea" },
+        ],
+      },
+    ],
+  },
+  legal: {
+    label: "Legal",
+    icon: ICON.legal,
+    sections: [
+      {
+        key: "hero",
+        title: "Hero",
+        fields: [
+          { name: "heading", label: "Heading", type: "text" },
+          { name: "lastUpdated", label: "Last Updated Caption", type: "text" },
+        ],
+      },
+      {
+        key: "sections",
+        title: "Legal Blocks",
+        type: "list",
+        fields: [
+          { name: "heading", label: "Block Heading", type: "text" },
+          { name: "content", label: "Content (use \\n for line break)", type: "textarea" },
+          { name: "email", label: "Email (optional)", type: "text" },
+        ],
+      },
+    ],
+  },
+  comingSoon: {
+    label: "Coming Soon",
+    icon: ICON.comingSoon,
+    sections: [
+      {
+        key: "page",
+        title: "Coming Soon Copy",
+        fields: [
+          { name: "heading", label: "Heading", type: "text" },
+          { name: "subtitle", label: "Subtitle", type: "textarea" },
+          { name: "cta", label: "CTA Button Text", type: "text" },
+        ],
+      },
+    ],
+  },
+  global: {
+    label: "Global (Nav + Footer)",
+    icon: ICON.global,
+    sections: [
+      {
+        key: "nav",
+        title: "Navigation",
+        fields: [
+          { name: "menuButton", label: "Menu Pill Label", type: "text" },
+          { name: "contactButton", label: "Contact Button Label", type: "text" },
+          { name: "sayHelloLabel", label: "Mobile · Say Hello Label", type: "text" },
+          { name: "sayHelloEmail", label: "Mobile · Say Hello Email", type: "text" },
+          { name: "talentLabel", label: "Mobile · Talent Label", type: "text" },
+          { name: "talentEmail", label: "Mobile · Talent Email", type: "text" },
+        ],
+      },
+      {
+        key: "nav.menu",
+        title: "Nav Menu Items",
+        type: "list",
+        fields: [
+          { name: "label", label: "Label", type: "text" },
+          { name: "href", label: "Link URL", type: "text" },
+        ],
+      },
+      {
+        key: "footer",
+        title: "Footer",
+        fields: [
+          { name: "exploreLabel", label: "Explore Label", type: "text" },
+          { name: "stalkUsLabel", label: "Social Label", type: "text" },
+          { name: "sayHelloLabel", label: "Say Hello Label", type: "text" },
+          { name: "sayHelloEmail", label: "Say Hello Email", type: "text" },
+          { name: "callUsLabel", label: "Call Us Label", type: "text" },
+          { name: "callUsPhone", label: "Phone", type: "text" },
+          { name: "copyright", label: "Copyright", type: "text" },
+          { name: "legalLink", label: "Legal Link Text", type: "text" },
+          { name: "address", label: "Address", type: "textarea" },
+        ],
+      },
+      {
+        key: "footer.exploreLinks",
+        title: "Footer · Explore Links",
+        type: "list",
+        fields: [
+          { name: "label", label: "Label", type: "text" },
+          { name: "href", label: "URL", type: "text" },
+        ],
+      },
+      {
+        key: "footer.stalkUsLinks",
+        title: "Footer · Social Links",
+        type: "list",
+        fields: [
+          { name: "label", label: "Label", type: "text" },
+          { name: "href", label: "URL", type: "text" },
         ],
       },
     ],
@@ -522,6 +736,26 @@ const FALLBACK_DATA = {
   },
 };
 
+// Utilities for reading/writing nested keys like "cta.left" inside the
+// section dictionary, so a single PAGE_CONFIG section can address a deep
+// slot in the published JSON shape consumed by public components.
+function getNested(obj, path) {
+  if (!obj) return undefined;
+  return path.split(".").reduce((cur, k) => (cur == null ? cur : cur[k]), obj);
+}
+function setNested(obj, path, value) {
+  const segments = path.split(".");
+  const next = { ...(obj || {}) };
+  let cur = next;
+  for (let i = 0; i < segments.length - 1; i++) {
+    const k = segments[i];
+    cur[k] = { ...(cur[k] || {}) };
+    cur = cur[k];
+  }
+  cur[segments[segments.length - 1]] = value;
+  return next;
+}
+
 // ─── Main Admin Panel ───
 export default function AdminPanel() {
   const [activePage, setActivePage] = useState("home");
@@ -561,7 +795,7 @@ export default function AdminPanel() {
   }, [activePage]);
 
   function updateSection(sectionKey, value) {
-    setPageData((prev) => ({ ...prev, [sectionKey]: value }));
+    setPageData((prev) => setNested(prev, sectionKey, value));
   }
 
   async function handleSave() {
@@ -645,14 +879,14 @@ export default function AdminPanel() {
                 <ListSectionEditor
                   key={section.key}
                   section={section}
-                  data={pageData[section.key]}
+                  data={getNested(pageData, section.key)}
                   onChange={(val) => updateSection(section.key, val)}
                 />
               ) : (
                 <SectionEditor
                   key={section.key}
                   section={section}
-                  data={pageData[section.key]}
+                  data={getNested(pageData, section.key)}
                   onChange={(val) => updateSection(section.key, val)}
                 />
               )
