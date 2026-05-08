@@ -1,40 +1,50 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const cloudinary = require("cloudinary").v2;
+const ImageKit = require("@imagekit/nodejs");
+const { toFile } = require("@imagekit/nodejs");
 const PageContent = require("../models/PageContent");
 const adminAuth = require("../middleware/auth");
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-function uploadToCloudinary(fileBuffer, resourceType) {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { resource_type: resourceType, folder: "marshall-admin" },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result);
-      }
-    );
-    stream.end(fileBuffer);
+const imagekit = new ImageKit({
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+});
+
+async function uploadToImageKit(fileBuffer, originalName, folder) {
+  const file = await toFile(fileBuffer, originalName);
+  return imagekit.files.upload({
+    file,
+    fileName: originalName,
+    folder,
+    useUniqueFileName: true,
   });
 }
 
-// Upload image → returns Cloudinary URL
 router.post("/upload-image", adminAuth, upload.single("image"), async (req, res) => {
   try {
-    const result = await uploadToCloudinary(req.file.buffer, "image");
-    res.json({ url: result.secure_url });
+    const result = await uploadToImageKit(
+      req.file.buffer,
+      req.file.originalname,
+      "/marshallhaber/images"
+    );
+    res.json({ url: result.url });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Upload video → returns Cloudinary URL
 router.post("/upload-video", adminAuth, upload.single("video"), async (req, res) => {
   try {
-    const result = await uploadToCloudinary(req.file.buffer, "video");
-    res.json({ url: result.secure_url });
+    const result = await uploadToImageKit(
+      req.file.buffer,
+      req.file.originalname,
+      "/marshallhaber/videos"
+    );
+    res.json({ url: result.url });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
