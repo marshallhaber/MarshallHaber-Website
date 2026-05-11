@@ -134,11 +134,15 @@ export default function ContactModal({ isOpen, onClose }) {
                                 </div>
                             ) : (
                                 <>
-                                    <div className={styles.headerRow}>
-                                        <h2 id="contact-modal-title" className={styles.heading}>
-                                            Send your project request
-                                        </h2>
-                                        <div className={styles.closeGroup}>
+                                        <div className={styles.headerRow} style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                                            <h2 id="contact-modal-title" className={styles.heading}>
+                                                How Can We Help?
+                                            </h2>
+                                            <p style={{ marginTop: '8px', fontSize: '1.2rem', fontFamily: "'PP Mori', sans-serif" }}>
+                                                Briefly describe your project, goals or challenge.
+                                            </p>
+                                        </div>
+                                        <div className={styles.closeGroup} style={{ position: 'absolute', top: '32px', right: '32px' }}>
                                             <button
                                                 type="button"
                                                 className={styles.closeIconBtn}
@@ -157,7 +161,6 @@ export default function ContactModal({ isOpen, onClose }) {
                                                 Close
                                             </button>
                                         </div>
-                                    </div>
 
                                     <form onSubmit={handleSubmit}>
                                         <div className={styles.section}>
@@ -207,7 +210,7 @@ export default function ContactModal({ isOpen, onClose }) {
                                             </div>
                                             <textarea
                                                 className={styles.textareaBox}
-                                                placeholder="Sell your dream!"
+                                                placeholder=""
                                                 value={message}
                                                 onChange={(e) => setMessage(e.target.value)}
                                                 aria-label="Project details"

@@ -4,6 +4,7 @@ import Reveal from "../ui/Reveal";
 import { usePageContent } from "../../hooks/usePageContent";
 import { getContent } from "../../lib/content";
 import { defaults } from "../../lib/contentDefaults";
+import TransitionLink from "../ui/TransitionLink";
 
 const cardInitial = [
   { opacity: 0, x: -150 },
@@ -51,12 +52,6 @@ export default function Insights() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="flex items-center gap-2 shrink-0 mt-2"
           >
-            <motion.button
-              style={{ borderColor: buttonBorder, color: buttonBorder, backgroundColor: "transparent" }}
-              className="flex items-center gap-2 px-4 py-1.5 border-[0.5px] border-opacity-30 rounded-full text-[11px] font-bold uppercase tracking-wider whitespace-nowrap"
-            >
-              {trendingButton}
-            </motion.button>
             <motion.div
               style={{ borderColor: buttonBorder, color: buttonBorder }}
               className="w-8 h-8 border-[0.5px] border-opacity-30 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
@@ -77,96 +72,101 @@ export default function Insights() {
             }}
           >
             {cards.map((card, i) => (
-              <motion.div
+              <TransitionLink
                 key={i}
-                initial={cardInitial[i % cardInitial.length]}
-                whileInView={{ opacity: 1, x: 0, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{
-                  duration: 1.2,
-                  ease: [0.16, 1, 0.3, 1],
-                  delay: i * 0.1,
-                }}
-                className="flex flex-col gap-0 cursor-pointer group"
+                to={`/insights/${card.slug || 'article'}`}
+                className="flex flex-col gap-0 group"
                 style={{ width: "100%", minWidth: 0 }}
               >
-                {/* Card box — locked aspect ratio via padding trick */}
-                <div
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                    paddingTop: "55.5556%",
-                    backgroundColor: card.bg,
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    className="flex flex-col items-center justify-center text-center"
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      padding: "clamp(24px, 4vw, 48px)",
-                      color:
-                        card.bg === "#2B59C3" || card.bg === "#0B0215"
-                          ? "#fbf0f2"
-                          : "#020817",
-                    }}
-                  >
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-6 opacity-50">
-                      {card.brand}
-                    </p>
-
-                    <p
-                      className="text-sm mb-3 tracking-wide leading-snug"
-                      style={{
-                        fontFamily: "'Nib Pro', serif",
-                        fontStyle: "italic",
-                        color: card.labelColor || "inherit",
-                      }}
-                    >
-                      {card.label}
-                    </p>
-
-                    <h3
-                      className="font-bold leading-tight tracking-tight"
-                      style={{
-                        fontFamily: "'PP Mori', sans-serif",
-                        fontSize: "clamp(1.6rem, 3.2vw, 2.4rem)",
-                      }}
-                    >
-                      {(card.titleLarge || card.title).split("\n").map((line, j, arr) => (
-                        <span key={j}>
-                          {line}
-                          {j < arr.length - 1 && <br />}
-                        </span>
-                      ))}
-                    </h3>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                <motion.div
+                  initial={cardInitial[i % cardInitial.length]}
+                  whileInView={{ opacity: 1, x: 0, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
                   transition={{
-                    duration: 1,
+                    duration: 1.2,
                     ease: [0.16, 1, 0.3, 1],
-                    delay: i * 0.1 + 0.2,
+                    delay: i * 0.1,
                   }}
-                  style={{
-                    color: textColor,
-                    fontSize: "clamp(0.95rem, 1.8vw, 1.15rem)",
-                    minHeight: "calc(2 * 1.375em)",
-                    display: "flex",
-                    alignItems: "flex-start",
-                  }}
-                  className="font-semibold leading-snug mt-5 mb-4 group-hover-underline"
+                  className="flex flex-col gap-0 cursor-pointer"
+                  style={{ width: "100%", minWidth: 0 }}
                 >
-                  {card.desc}
-                </motion.p>
+                  {/* Card box — locked aspect ratio via padding trick */}
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      paddingTop: "55.5556%",
+                      backgroundColor: card.bg,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <div
+                      className="flex flex-col items-center justify-center text-center"
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        padding: "clamp(24px, 4vw, 48px)",
+                        color:
+                          card.bg === "#2B59C3" || card.bg === "#0B0215"
+                            ? "#fbf0f2"
+                            : "#020817",
+                      }}
+                    >
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-6 opacity-50">
+                        {card.brand}
+                      </p>
 
-              </motion.div>
+                      <p
+                        className="text-sm mb-3 tracking-wide leading-snug"
+                        style={{
+                          fontFamily: "'Nib Pro', serif",
+                          fontStyle: "italic",
+                          color: card.labelColor || "inherit",
+                        }}
+                      >
+                        {card.label}
+                      </p>
+
+                      <h3
+                        className="font-bold leading-tight tracking-tight"
+                        style={{
+                          fontFamily: "'PP Mori', sans-serif",
+                          fontSize: "clamp(1.6rem, 3.2vw, 2.4rem)",
+                        }}
+                      >
+                        {(card.titleLarge || card.title).split("\n").map((line, j, arr) => (
+                          <span key={j}>
+                            {line}
+                            {j < arr.length - 1 && <br />}
+                          </span>
+                        ))}
+                      </h3>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{
+                      duration: 1,
+                      ease: [0.16, 1, 0.3, 1],
+                      delay: i * 0.1 + 0.2,
+                    }}
+                    style={{
+                      color: textColor,
+                      fontSize: "clamp(0.95rem, 1.8vw, 1.15rem)",
+                      minHeight: "calc(2 * 1.375em)",
+                      display: "flex",
+                      alignItems: "flex-start",
+                    }}
+                    className="font-semibold leading-snug mt-5 mb-4 group-hover-underline"
+                  >
+                    {card.desc}
+                  </motion.p>
+                </motion.div>
+              </TransitionLink>
             ))}
           </div>
         </div>

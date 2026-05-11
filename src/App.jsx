@@ -19,6 +19,7 @@ import WorkDetail from "./pages/WorkDetail";
 import ComingSoon from "./pages/ComingSoon";
 import AdminPanel from "./pages/AdminPanel";
 import Legal from "./pages/Legal";
+import InsightDetail from "./pages/InsightDetail";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -51,6 +52,7 @@ function PageRoutes() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/clients" element={<Clients />} />
         <Route path="/legal" element={<Legal />} />
+        <Route path="/insights/:slug" element={<InsightDetail />} />
         <Route path="*" element={<ComingSoon />} />
       </Routes>
     </ErrorBoundary>

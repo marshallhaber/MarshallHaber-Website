@@ -32,6 +32,9 @@ export default function WorkDetail() {
         description: p.description || '',
         image: p.imageUrl || '',
         video: p.videoUrl || '',
+        description2: p.description2 || '',
+        image2: p.image2Url || '',
+        video2: p.video2Url || '',
         fromCms: true,
       }));
     const hardcodedSlugs = new Set(hardcodedProjects.map((p) => p.slug));
@@ -130,7 +133,7 @@ export default function WorkDetail() {
           >
             <div className={styles.infoDivider} />
             <h3 className={styles.infoLabel}>{info.servicesLabel}</h3>
-            <p className={styles.infoValue}>{info.servicesValue}</p>
+            <p className={styles.infoValue}>{project.services || info.servicesValue}</p>
           </motion.div>
         </section>
 
@@ -145,15 +148,55 @@ export default function WorkDetail() {
           </motion.section>
         )}
 
-        {/* Main Image */}
+        {/* Main Image or Video */}
         <motion.section
           className={styles.mainImageWrapper}
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <img src={project.image} alt={project.title} className={styles.mainImage} />
+          {project.video ? (
+            <video src={project.video} autoPlay muted loop playsInline className={styles.mainImage} />
+          ) : (
+            <img src={project.image} alt={project.title} className={styles.mainImage} />
+          )}
         </motion.section>
+
+        {project.description2 && (
+          <motion.section
+            className={styles.descriptionSection}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+          >
+            <p className={styles.description}>{project.description2}</p>
+          </motion.section>
+        )}
+
+        {project.image2 && (
+          <motion.section
+            className={styles.mainImageWrapper}
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+          >
+            <img src={project.image2} alt={`${project.title} secondary`} className={styles.mainImage} />
+          </motion.section>
+        )}
+
+        {project.video2 && (
+          <motion.section
+            className={styles.mainImageWrapper}
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+          >
+            <video src={project.video2} autoPlay muted loop playsInline className={styles.mainImage} />
+          </motion.section>
+        )}
       </div>
 
       {/* More Projects Section */}

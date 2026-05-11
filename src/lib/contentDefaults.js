@@ -33,7 +33,7 @@ export const defaults = {
       ctaText: "See more projects",
     },
     insights: {
-      heading: "Latest insights for scaleup teams",
+      heading: "Latest insights",
       trendingButton: "What's trending.",
       cards: [
         {
@@ -41,7 +41,8 @@ export const defaults = {
           brand: "Marshall Haber",
           label: "The Heart of the Shift:",
           title: "Brand Messaging is the\nSoul of Rebranding",
-          desc: "The Heart of the Shift: Brand Messaging Is the Soul of Rebranding",
+          desc: "Brand Messaging is the Soul of Rebranding",
+          slug: "brand-messaging",
         },
         {
           bg: "#2B59C3",
@@ -49,14 +50,16 @@ export const defaults = {
           label: "Research Is Our Love Language:",
           labelColor: "#fbf0f2",
           title: "The Art of\nGathering Insights",
-          desc: "Research Is Our Love Language: The Art of Gathering Insights",
+          desc: "The Art of Gathering Insights",
+          slug: "art-of-gathering-insights",
         },
         {
           bg: "#0B0215",
           brand: "Marshall Haber",
           label: "The Founders' Guide to Rebranding",
           titleLarge: "...is it time?",
-          desc: "The Founders' Guide to Rebranding",
+          desc: "...is it time?",
+          slug: "founders-guide",
         },
       ],
     },

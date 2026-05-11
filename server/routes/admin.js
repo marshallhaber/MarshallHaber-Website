@@ -1,34 +1,36 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const ImageKit = require("@imagekit/nodejs");
-const { toFile } = require("@imagekit/nodejs");
+const cloudinary = require("cloudinary").v2;
 const PageContent = require("../models/PageContent");
 const adminAuth = require("../middleware/auth");
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
 });
 
-async function uploadToImageKit(fileBuffer, originalName, folder) {
-  const file = await toFile(fileBuffer, originalName);
-  return imagekit.files.upload({
-    file,
-    fileName: originalName,
-    folder,
-    useUniqueFileName: true,
+async function uploadToCloudinary(fileBuffer, resourceType, folder) {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { resource_type: resourceType, folder: folder },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve({ url: result.secure_url });
+      }
+    );
+    uploadStream.end(fileBuffer);
   });
 }
 
 router.post("/upload-image", adminAuth, upload.single("image"), async (req, res) => {
   try {
-    const result = await uploadToImageKit(
+    const result = await uploadToCloudinary(
       req.file.buffer,
-      req.file.originalname,
+      "image",
       "/marshall-admin/images"
     );
     res.json({ url: result.url });
@@ -39,9 +41,9 @@ router.post("/upload-image", adminAuth, upload.single("image"), async (req, res)
 
 router.post("/upload-video", adminAuth, upload.single("video"), async (req, res) => {
   try {
-    const result = await uploadToImageKit(
+    const result = await uploadToCloudinary(
       req.file.buffer,
-      req.file.originalname,
+      "video",
       "/marshall-admin/videos"
     );
     res.json({ url: result.url });
