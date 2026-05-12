@@ -19,3 +19,16 @@ export function getContent(sections, path, fallback) {
   if (Array.isArray(cur) && cur.length === 0) return fallback;
   return cur;
 }
+
+export function getLogoUrl(logo) {
+  if (!logo) return "";
+  if (
+    logo.startsWith("http://") ||
+    logo.startsWith("https://") ||
+    logo.startsWith("/") ||
+    logo.startsWith("data:")
+  ) {
+    return logo;
+  }
+  return `/CliendLogo/${logo}`;
+}

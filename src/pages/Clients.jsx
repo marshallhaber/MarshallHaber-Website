@@ -3,7 +3,7 @@ import { motion, useInView } from 'framer-motion';
 import TransitionLink from '../components/ui/TransitionLink';
 import styles from './Clients.module.css';
 import { usePageContent } from '../hooks/usePageContent';
-import { getContent } from '../lib/content';
+import { getContent, getLogoUrl } from '../lib/content';
 import { defaults } from '../lib/contentDefaults';
 
 /* ─── Fade-in wrapper ─── */
@@ -109,14 +109,20 @@ export default function Clients() {
                 <p className={styles.gridSubtext}>{gridSubtext}</p>
                 <motion.div className={styles.logoGrid} layout>
                     {filtered.map((client, i) => {
+                        const sizePercent = parseInt(client.logoSize, 10) || 100;
+                        const scaleFactor = sizePercent / 100;
                         return (
                             <FadeIn key={client.name} delay={i * 0.04}>
                                 <div className={styles.logoCell}>
                                     <div className={styles.logoContent}>
                                         <img 
-                                            src={`/CliendLogo/${client.logo}`} 
+                                            src={getLogoUrl(client.logo)} 
                                             alt={client.name} 
                                             className={styles.clientLogoImg}
+                                            style={{
+                                                transform: `scale(${scaleFactor})`,
+                                                transformOrigin: "center center",
+                                            }}
                                         />
                                     </div>
                                 </div>

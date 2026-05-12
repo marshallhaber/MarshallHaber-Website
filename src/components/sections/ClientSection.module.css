@@ -44,17 +44,18 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  height: 48px;
+  height: 64px;
 }
 
 .clientLogoImg {
-  max-height: 100%;
-  max-width: 100%;
+  max-height: 80%;
+  max-width: 90%;
   width: auto;
   height: auto;
   object-fit: contain;
-  opacity: 0.95;
-  filter: brightness(0) invert(1);
+  opacity: 0.85;
+  filter: grayscale(100%) invert(1);
+  mix-blend-mode: screen;
 }
 
 .showAllWrap {

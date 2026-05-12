@@ -2,20 +2,9 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import TransitionLink from "../ui/TransitionLink";
 import styles from "./ClientSection.module.css";
-
-const clients = [
-  { name: 'JPMorgan Chase', logo: 'jpmorgan.png' },
-  { name: 'Jeffries', logo: '09_Jeffries_Logo.png' },
-  { name: 'Eurotech', logo: '16_Eurotech_Logo.png' },
-  { name: 'Celadon', logo: 'Celadon_Logo.png' },
-  { name: 'Humankind Investments', logo: 'HumankindInvestments_Logo.png' },
-  { name: 'MIZ', logo: 'MIZ_Logo_SVG_Gadrientdark.png' },
-  { name: 'Y&R', logo: 'YR.png' },
-  { name: 'Centerbridge', logo: 'centerbridge.png' },
-  { name: 'Kaplan', logo: 'kaplan.png' },
-  { name: 'Hotel on Rivington', logo: 'rivington.png' },
-  { name: 'Trish McEvoy', logo: 'trishmcevoy-1.png' },
-];
+import { usePageContent } from "../../hooks/usePageContent";
+import { getContent, getLogoUrl } from "../../lib/content";
+import { defaults } from "../../lib/contentDefaults";
 
 function FadeIn({ children, delay = 0, className }) {
   const ref = useRef(null);
@@ -34,6 +23,9 @@ function FadeIn({ children, delay = 0, className }) {
 }
 
 export default function ClientSection() {
+  const { sections } = usePageContent("clients");
+  const clients = getContent(sections, "list", defaults.clients.list);
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -41,17 +33,25 @@ export default function ClientSection() {
           <h3 className={styles.label}>Clients:</h3>
 
           <div className={styles.logoGrid}>
-            {clients.map((client, i) => (
-              <FadeIn key={client.name} delay={i * 0.04} className={styles.logoCell}>
-                <img
-                  src={`/CliendLogo/${client.logo}`}
-                  alt={client.name}
-                  loading="lazy"
-                  decoding="async"
-                  className={styles.clientLogoImg}
-                />
-              </FadeIn>
-            ))}
+            {clients.map((client, i) => {
+              const sizePercent = parseInt(client.logoSize, 10) || 100;
+              const scaleFactor = sizePercent / 100;
+              return (
+                <FadeIn key={client.name} delay={i * 0.04} className={styles.logoCell}>
+                  <img
+                    src={getLogoUrl(client.logo)}
+                    alt={client.name}
+                    loading="lazy"
+                    decoding="async"
+                    className={styles.clientLogoImg}
+                    style={{
+                      transform: `scale(${scaleFactor})`,
+                      transformOrigin: "left center",
+                    }}
+                  />
+                </FadeIn>
+              );
+            })}
           </div>
         </div>
 

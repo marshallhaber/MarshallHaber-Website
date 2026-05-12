@@ -253,7 +253,21 @@ const PAGE_CONFIG = {
         fields: [
           { name: "name", label: "Client Name", type: "text" },
           { name: "category", label: "Category", type: "text" },
-          { name: "logo", label: "Logo Filename (in /CliendLogo)", type: "text" },
+          {
+            name: "logo",
+            label: "Logo Image",
+            type: "image",
+            description: "Recommended: Transparent SVG or horizontal PNG (e.g. 300x100px) with dark/transparent bg."
+          },
+          {
+            name: "logoSize",
+            label: "Logo Size (%)",
+            type: "number",
+            min: 10,
+            max: 300,
+            step: 5,
+            description: "Click + or - to scale this logo dynamically on the website (Default is 100%)."
+          },
         ],
       },
       {
@@ -309,6 +323,18 @@ const PAGE_CONFIG = {
         fields: [
           { name: "name", label: "Name", type: "text" },
           { name: "tagline", label: "Tagline", type: "text" },
+        ],
+      },
+      {
+        key: "servicePanels",
+        title: "Service Stack Panels",
+        type: "list",
+        fields: [
+          { name: "title", label: "Title", type: "text" },
+          { name: "description", label: "Description", type: "textarea" },
+          { name: "items", label: "Items (comma-separated)", type: "text" },
+          { name: "bg", label: "Background Color", type: "color" },
+          { name: "textColor", label: "Text Color (Tailwind class)", type: "text" },
         ],
       },
     ],
@@ -573,6 +599,33 @@ function FieldInput({ field, value, onChange }) {
       </div>
     );
   }
+  if (field.type === "number") {
+    const numVal = parseInt(value, 10) || 100;
+    const min = field.min !== undefined ? field.min : 10;
+    const max = field.max !== undefined ? field.max : 300;
+    const step = field.step !== undefined ? field.step : 5;
+    return (
+      <div className={styles.numberControlRow}>
+        <button
+          type="button"
+          className={styles.numBtn}
+          disabled={numVal <= min}
+          onClick={() => onChange((Math.max(min, numVal - step)).toString())}
+        >
+          -
+        </button>
+        <span className={styles.numVal}>{numVal}%</span>
+        <button
+          type="button"
+          className={styles.numBtn}
+          disabled={numVal >= max}
+          onClick={() => onChange((Math.min(max, numVal + step)).toString())}
+        >
+          +
+        </button>
+      </div>
+    );
+  }
   if (field.type === "textarea") {
     return (
       <textarea
@@ -609,6 +662,9 @@ function SectionEditor({ section, data, onChange }) {
               value={data?.[field.name]}
               onChange={(val) => onChange({ ...data, [field.name]: val })}
             />
+            {field.description && (
+              <span className={styles.fieldDescription}>{field.description}</span>
+            )}
           </div>
         ))}
       </div>
@@ -665,6 +721,9 @@ function ListSectionEditor({ section, data, onChange }) {
                     value={item[field.name]}
                     onChange={(val) => updateItem(i, field.name, val)}
                   />
+                  {field.description && (
+                    <span className={styles.fieldDescription}>{field.description}</span>
+                  )}
                 </div>
               ))}
             </div>

@@ -8,6 +8,15 @@ import { defaults } from '../lib/contentDefaults';
 
 gsap.registerPlugin(ScrollTrigger);
 import styles from './Services.module.css';
+import StackContainer from '../components/layout/StackContainer';
+import ServiceBlock, { StrategyVideo, VisualImage, WebsiteImage, ProductImage } from '../components/sections/Services';
+
+const PANEL_VISUALS = [
+  <StrategyVideo key="0" />,
+  <VisualImage key="1" />,
+  <WebsiteImage key="2" />,
+  <ProductImage key="3" />,
+];
 
 export default function Services() {
   const { sections } = usePageContent("services");
@@ -17,6 +26,27 @@ export default function Services() {
   const serviceCards = getContent(sections, "serviceCards", defaults.services.serviceCards);
   const programsHeading = getContent(sections, "programs.heading", defaults.services.programs.heading);
   const brandingServices = getContent(sections, "programs.services", defaults.services.programs.services);
+  const cmsServicePanels = getContent(sections, "servicePanels", defaults.services.servicePanels);
+
+  const servicePanels = cmsServicePanels.map((panel, i) => {
+    const items = Array.isArray(panel.items)
+      ? panel.items
+      : typeof panel.items === "string"
+        ? panel.items.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
+    return {
+      bg: panel.bg,
+      children: (
+        <ServiceBlock
+          title={panel.title}
+          description={panel.description}
+          list={items}
+          imageContent={PANEL_VISUALS[i % PANEL_VISUALS.length]}
+          textColor={panel.textColor || "text-[#020817]"}
+        />
+      ),
+    };
+  });
 
   useLayoutEffect(() => {
     document.body.style.backgroundColor = '#fbf0f2';
@@ -52,60 +82,9 @@ export default function Services() {
         </motion.h1>
       </section>
 
-      <div className={styles.divider} />
-
-      {/* ── Body: sidebar + cards ── */}
-      <section className={styles.body}>
-        <motion.div
-          className={styles.sidebar}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.15 }}
-        >
-          <span className={styles.sidebarLabel}>{sidebarLabel}</span>
-          <p className={styles.sidebarText}>{sidebarText}</p>
-        </motion.div>
-
-        <div className={styles.grid}>
-          {serviceCards.map((card, i) => (
-            <motion.div
-              key={card.id}
-              className={`${styles.card} ${card.featured ? styles.cardFeatured : ''} ${card.bg ? styles.cardColored : ''
-                }`}
-              style={card.bg ? { backgroundColor: card.bg } : {}}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <div className={styles.cardInner}>
-                <h3 className={styles.cardTitle}>{card.title}</h3>
-                <p className={styles.cardText}>{card.text}</p>
-              </div>
-              <span className={styles.cardArrow} aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 13L13 3M13 3H6M13 3V10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
       {/* ── Scroll-scale video section removed per request ── */}
 
-      {/* ── Branding services list ── */}
-      <section className={styles.programs}>
-        <h2 className={styles.programsHeading}>{programsHeading}</h2>
-        <div className={styles.programsList}>
-          {brandingServices.map((s) => (
-            <div key={s.name} className={styles.programRow} role="link" tabIndex={0}>
-              <span className={styles.programName}>{s.name}</span>
-              <span className={styles.programTagline}>{s.tagline}</span>
-              <span className={styles.programArrow} aria-hidden>→</span>
-            </div>
-          ))}
-        </div>
-      </section>
+
 
     </motion.div>
   );

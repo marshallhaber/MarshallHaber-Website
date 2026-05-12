@@ -562,3 +562,57 @@
     flex-direction: column;
   }
 }
+
+/* ═══════ Number / Size Offset Controller ═══════ */
+.numberControlRow {
+  display: inline-flex;
+  align-items: center;
+  background: #09090b;
+  border: 1px solid #27272a;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 38px;
+  box-sizing: border-box;
+  max-width: 140px;
+}
+
+.numBtn {
+  width: 38px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: #a1a1aa;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s;
+}
+
+.numBtn:hover:not(:disabled) {
+  background: #18181b;
+  color: #fff;
+}
+
+.numBtn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.numVal {
+  flex: 1;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fafafa;
+  min-width: 44px;
+}
+
+.fieldDescription {
+  font-size: 0.68rem;
+  color: #71717a;
+  margin-top: 4px;
+  line-height: 1.45;
+}
