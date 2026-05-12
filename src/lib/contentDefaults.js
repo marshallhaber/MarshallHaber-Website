@@ -14,6 +14,7 @@ export const defaults = {
     hero: {
       headingBold: "Premium Branding Agency",
       headingItalic: "for B2B Tech Scaleups",
+      videoUrl: "",
     },
     about: {
       heading: "Strategic branding,\ndigital & production\nbuilt for companies in motion.",

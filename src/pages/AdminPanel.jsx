@@ -31,6 +31,7 @@ const PAGE_CONFIG = {
         fields: [
           { name: "headingBold", label: "Heading (bold line)", type: "textarea" },
           { name: "headingItalic", label: "Heading (italic line)", type: "textarea" },
+          { name: "videoUrl", label: "Hero Video", type: "video" },
         ],
       },
       {

@@ -22,6 +22,8 @@ export default function Hero() {
   const { sections } = usePageContent("home");
   const headingBold = getContent(sections, "hero.headingBold", defaults.home.hero.headingBold);
   const headingItalic = getContent(sections, "hero.headingItalic", defaults.home.hero.headingItalic);
+  const cmsVideoUrl = getContent(sections, "hero.videoUrl", defaults.home.hero.videoUrl);
+  const activeVideoUrl = cmsVideoUrl || videoSrc;
 
   // useLayoutEffect ensures cleanup (ctx.revert) runs BEFORE React removes
   // the DOM nodes, so GSAP can properly un-pin and remove the pin spacer.
@@ -120,7 +122,7 @@ export default function Hero() {
           muted
           playsInline
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          src={videoSrc}
+          src={activeVideoUrl}
         />
       </div>
 

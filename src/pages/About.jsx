@@ -86,10 +86,6 @@ export default function About() {
         <h1 className={styles.estHeading}>
           {estHeading}
         </h1>
-        <div className={styles.tagline}>
-          <p className={styles.taglineBold}>{taglineBold}</p>
-          <p className={styles.taglineItalic}>{taglineItalic}</p>
-        </div>
       </section>
 
       {/* About Text */}
