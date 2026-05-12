@@ -347,7 +347,8 @@ export default function Navbar() {
     pathname === "/about" ||
     pathname === "/contact" ||
     pathname === "/legal" ||
-    pathname.startsWith("/work/");
+    pathname.startsWith("/work/") ||
+    pathname.startsWith("/insights/");
   const [showCenterLogo, setShowCenterLogo] = useState(useShortLogoByDefault);
   const [isFooterVisible, setIsFooterVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -373,6 +374,7 @@ export default function Navbar() {
       const lightBackgrounds = [
         "rgb(251, 240, 242)", "#FBF0F2", "#fbf0f2",
         "rgb(244, 237, 217)", "#F4EDD9", "#f4edd9",
+        "rgb(244, 240, 234)", "#F4F0EA", "#f4f0ea",
         "rgb(255, 255, 255)", "#FFFFFF", "#ffffff", "white",
       ];
       setIsLightBg(lightBackgrounds.includes(bg));

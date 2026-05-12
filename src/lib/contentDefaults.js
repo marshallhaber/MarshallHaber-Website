@@ -38,29 +38,31 @@ export const defaults = {
       trendingButton: "What's trending.",
       cards: [
         {
-          bg: "#f7c4d5",
-          brand: "Marshall Haber",
+          bg: "#ffb5cc",
+          brand: "SERIOUS.BUSINESS",
           label: "The Heart of the Shift:",
+          labelColor: "#020817",
           title: "Brand Messaging is the\nSoul of Rebranding",
-          desc: "Brand Messaging is the Soul of Rebranding",
+          desc: "",
           slug: "brand-messaging",
         },
         {
-          bg: "#2B59C3",
-          brand: "Marshall Haber",
+          bg: "#f4f0ea",
+          brand: "SERIOUS.BUSINESS",
           label: "Research Is Our Love Language:",
-          labelColor: "#fbf0f2",
-          title: "The Art of\nGathering Insights",
-          desc: "The Art of Gathering Insights",
+          labelColor: "#ffb5cc",
+          title: "The Art of\nGathering Ins*ghts",
+          desc: "",
           slug: "art-of-gathering-insights",
         },
         {
-          bg: "#0B0215",
-          brand: "Marshall Haber",
+          bg: "#f4f0ea",
+          brand: "SERIOUS.BUSINESS",
           label: "The Founders' Guide to Rebranding",
-          titleLarge: "...is it time?",
-          desc: "...is it time?",
-          slug: "founders-guide",
+          labelColor: "#ffb5cc",
+          title: "...*s it time?",
+          desc: "",
+          slug: "the-founders-guide-to-rebranding",
         },
       ],
     },
@@ -357,6 +359,33 @@ export const defaults = {
         heading: "Intellectual Property",
         content: "All content, branding, and design assets on this site are the property of Marshall Haber Creative Group or our clients. Unauthorized reproduction is prohibited.",
       },
+    ],
+  },
+
+  // ─────────────── INSIGHTS (Articles) ───────────────
+  insights: {
+    articles: [
+      {
+        title: "Brand Messaging is the Soul of Rebranding",
+        slug: "brand-messaging",
+        heroImage: "",
+        body: "## 1. The Foundation of Rebranding\n\nBrand messaging is the soul of your rebrand. Without a clear message, visual identity falls flat. It's the compass that guides every touchpoint—from tagline to website copy to sales deck.\n\n## 2. Customer Interviews\n\nPro Tip: Conduct in-depth customer interviews and ask, \"What problem does this brand solve for you?\" and \"How does this brand make you feel?\" Often, the most impactful insights come from responses that reveal underlying motivations and desires.\n\n## 3. The Outcome of Deep Research: Differentiation & Positioning\n\nTrue differentiation isn't just about what you offer—it's about why you exist and how you communicate that story. Brands that succeed in standing out do so because they have a clear, compelling position that resonates deeply with their audience.\n\nTo craft an authentic positioning strategy:\n\n- Identify the unique aspects of your brand DNA that competitors can't replicate.\n- Align messaging with customer needs and emotional triggers.\n- Use research insights to craft a positioning statement that feels both bold and authentic.",
+        images: [],
+      },
+      {
+        title: "The Art of Gathering Insights",
+        slug: "art-of-gathering-insights",
+        heroImage: "",
+        body: "## 1. Why Research Is Our Love Language\n\nGreat brands aren't born from guesswork. They're built on deep, empathetic research that uncovers what makes people tick.\n\n## 2. Internal Stakeholders\n\nThrough internal interviews and workshops, we uncover the unspoken truths about a brand—the stories that drive passion, the frustrations that need to be addressed, and the vision that fuels its long-term success.\n\n## 3. The Brand's Heartbeat\n\nA brand isn't just an external entity—it's deeply embedded in the people who bring it to life every day. Employees, leadership, and key stakeholders are invaluable sources of insight, offering perspectives that no external research can replicate.",
+        images: [],
+      },
+      {
+        title: "The Founders' Guide to Rebranding",
+        slug: "the-founders-guide-to-rebranding",
+        heroImage: "",
+        body: "## ...is it time?\n\nKnowing when to rebrand is half the battle. If your brand no longer reflects who you are, where you're headed, or how you want to be perceived—it's time.\n\n## Signs You Need a Rebrand\n\n- Your brand looks dated compared to competitors\n- You've outgrown your original positioning\n- Mergers, acquisitions, or leadership changes have shifted your identity\n- Customer perception doesn't match your actual value\n\n## The Founder's Role\n\nAs a founder, your vision is the DNA of the brand. A successful rebrand doesn't abandon that—it amplifies it for the next chapter.",
+        images: [],
+      }
     ],
   },
 

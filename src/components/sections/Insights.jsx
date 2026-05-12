@@ -12,12 +12,39 @@ const cardInitial = [
   { opacity: 0, x: 150 },
 ];
 
+const SmileyI = () => (
+  <span className="relative inline-block mx-[1px]">
+    <span className="opacity-0">i</span>
+    <span className="absolute inset-0 flex items-center justify-center -translate-y-[0.1em]">ı</span>
+    <svg className="absolute -top-[0.2em] left-1/2 -translate-x-1/2 w-[0.4em] h-[0.4em] text-[#ffb5cc]" fill="currentColor" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="12" />
+      <path d="M7 10a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm10 0a1.5 1.5 0 110-3 1.5 1.5 0 010 3zM12 16c-2.5 0-4.5-1.5-5.5-3.5h11c-1 2-3 3.5-5.5 3.5z" fill="#020817" />
+    </svg>
+  </span>
+);
+
+function renderTitleWithSmiley(text) {
+  if (!text) return null;
+  return text.split('*').map((part, i, arr) => (
+    <span key={i}>
+      {part}
+      {i < arr.length - 1 && <SmileyI />}
+    </span>
+  ));
+}
+
 export default function Insights() {
   const sectionRef = useRef(null);
   const { sections } = usePageContent("home");
   const heading = getContent(sections, "insights.heading", defaults.home.insights.heading);
   const trendingButton = getContent(sections, "insights.trendingButton", defaults.home.insights.trendingButton);
-  const cards = getContent(sections, "insights.cards", defaults.home.insights.cards);
+  const rawCards = getContent(sections, "insights.cards", defaults.home.insights.cards);
+  // Merge CMS cards with defaults so slugs and other fields are never empty
+  const defaultCards = defaults.home.insights.cards;
+  const cards = rawCards.map((card, i) => {
+    const def = defaultCards[i] || {};
+    return { ...def, ...card, slug: card.slug || def.slug || `article-${i}` };
+  });
 
   // Section has a static cream bg; all text/borders stay dark for readability.
   const textColor = "#020817";
@@ -135,8 +162,8 @@ export default function Insights() {
                         }}
                       >
                         {(card.titleLarge || card.title).split("\n").map((line, j, arr) => (
-                          <span key={j}>
-                            {line}
+                          <span key={j} className="whitespace-nowrap">
+                            {renderTitleWithSmiley(line)}
                             {j < arr.length - 1 && <br />}
                           </span>
                         ))}
@@ -144,27 +171,7 @@ export default function Insights() {
                     </div>
                   </div>
 
-                  {/* Description */}
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{
-                      duration: 1,
-                      ease: [0.16, 1, 0.3, 1],
-                      delay: i * 0.1 + 0.2,
-                    }}
-                    style={{
-                      color: textColor,
-                      fontSize: "clamp(0.95rem, 1.8vw, 1.15rem)",
-                      minHeight: "calc(2 * 1.375em)",
-                      display: "flex",
-                      alignItems: "flex-start",
-                    }}
-                    className="font-semibold leading-snug mt-5 mb-4 group-hover-underline"
-                  >
-                    {card.desc}
-                  </motion.p>
+                  {/* Description removed as per new layout */}
                 </motion.div>
               </TransitionLink>
             ))}
