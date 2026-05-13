@@ -35,6 +35,7 @@ export default function Work() {
           subtitle: p.subtitle || '',
           category: p.category || 'Uncategorized',
           client: p.client || p.title,
+          services: p.services || '',
           description: p.description || '',
           image: p.imageUrl || '',
           video: p.videoUrl || '',
@@ -44,9 +45,30 @@ export default function Work() {
   );
 
   const allProjects = useMemo(() => {
+    const cmsMap = new Map(cmsProjects.map((p) => [p.slug, p]));
+
+    const mergedHardcoded = hardcodedProjects.map((hp) => {
+      const override = cmsMap.get(hp.slug);
+      if (override) {
+        return {
+          ...hp,
+          title: override.title || hp.title,
+          subtitle: override.subtitle || hp.subtitle,
+          category: override.category || hp.category,
+          client: override.client || hp.client,
+          services: override.services || hp.services,
+          description: override.description || hp.description,
+          image: override.image || hp.image,
+          video: override.video || hp.video,
+          fromCms: true,
+        };
+      }
+      return hp;
+    });
+
     const hardcodedSlugs = new Set(hardcodedProjects.map(p => p.slug));
     const newCms = cmsProjects.filter(p => !hardcodedSlugs.has(p.slug));
-    return [...hardcodedProjects, ...newCms];
+    return [...mergedHardcoded, ...newCms];
   }, [cmsProjects]);
 
   const industriesCount = useMemo(
