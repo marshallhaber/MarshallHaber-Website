@@ -99,14 +99,14 @@ export const defaults = {
     ],
     cta: {
       left: {
-        topBold: "You feel it too?",
-        topItalic: "Let's talk, no strings attached",
-        heading: "Send Request",
+        topBold: "Ready When You Are",
+        topItalic: "Strategy, branding, digital & execution.",
+        heading: "Request Inquiry",
       },
       right: {
-        topBold: "Our free offer for B2B tech scaleups!",
-        topItalic: "We identify high-impact messaging and brand fixes you can implement within 24 hours.",
-        heading: "Brand Masterplan",
+        topBold: "Momentum Session",
+        topItalic: "A focused strategic review designed to uncover immediate brand, messaging and growth opportunities.",
+        heading: "Request Review",
       },
     },
   },
@@ -123,18 +123,7 @@ export const defaults = {
       { text: "That's why we craft our future with kindness to create brands that make people smile." },
       { text: "Today our dream team of 15 creatives with a global perspective has crafted a new generation of brands with over 180 change-making scaleups in Europe and the Americas, a living proof that it is culture that drives a serious business." },
     ],
-    cta: {
-      sendRequest: {
-        topBold: "You feel it too?",
-        topItalic: "Let's talk, no strings attached",
-        heading: "Send Request",
-      },
-      masterplan: {
-        topBold: "Our free offer for B2B tech scaleups!",
-        topItalic: "We identify high-impact messaging and brand fixes you can implement within 24 hours.",
-        heading: "Brand Masterplan",
-      },
-    },
+
   },
 
   // ─────────────── SERVICES ───────────────
@@ -349,18 +338,7 @@ export const defaults = {
       servicesValue: "Strategy · Brand Identity · Website",
     },
     moreProjectsHeading: "More projects",
-    cta: {
-      sendRequest: {
-        topBold: "You feel it too?",
-        topItalic: "Let's talk, no strings attached",
-        heading: "Send Request",
-      },
-      masterplan: {
-        topBold: "Our free offer for B2B tech scaleups!",
-        topItalic: "We identify high-impact messaging and brand fixes you can implement within 24 hours.",
-        heading: "Brand Masterplan",
-      },
-    },
+
   },
 
   // ─────────────── CONTACT ───────────────

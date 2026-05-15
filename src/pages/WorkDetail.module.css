@@ -226,28 +226,30 @@
 .ctaSection {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  padding: 0 4rem 5rem 4rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  gap: 24px;
+  width: 100%;
+  padding: 80px 24px;
+  background-color: #fbf0f2;
+  max-width: 100%;
+  margin: 0;
 }
 
 .ctaBlockDark {
-  background-color: #020817;
-  color: #fbf0f2;
+  background-color: #E8E6DF;
+  color: #020817;
   padding: 3rem 3rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-height: 300px;
   text-decoration: none;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
   border-radius: 12px;
-  border: 1px solid rgba(244, 237, 217, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .ctaBlockDark:hover {
-  opacity: 0.9;
+  filter: brightness(0.95);
 }
 
 .ctaBlockPink {

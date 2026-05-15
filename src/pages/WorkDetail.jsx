@@ -18,8 +18,9 @@ export default function WorkDetail() {
   const { sections: workSections, loading: workLoading } = usePageContent("work");
   const info = getContent(sections, "info", defaults.workDetail.info);
   const moreProjectsHeading = getContent(sections, "moreProjectsHeading", defaults.workDetail.moreProjectsHeading);
-  const ctaSendRequest = getContent(sections, "cta.sendRequest", defaults.workDetail.cta.sendRequest);
-  const ctaMasterplan = getContent(sections, "cta.masterplan", defaults.workDetail.cta.masterplan);
+  const { sections: homeSections } = usePageContent("home");
+  const ctaInquiry = getContent(homeSections, "cta.left", defaults.home.cta.left);
+  const ctaReview = getContent(homeSections, "cta.right", defaults.home.cta.right);
 
   const projects = useMemo(() => {
     const cms = (workSections?.projects || [])
@@ -257,29 +258,18 @@ export default function WorkDetail() {
           style={{ border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}
         >
           <div className={styles.ctaTextTop}>
-            <strong>{ctaSendRequest.topBold}</strong>
-            <span>{ctaSendRequest.topItalic}</span>
+            <strong>{ctaInquiry.topBold}</strong>
+            <span>{ctaInquiry.topItalic}</span>
           </div>
-          <h2 className={styles.ctaHeading}>{ctaSendRequest.heading}</h2>
+          <h2 className={styles.ctaHeading}>{ctaInquiry.heading}</h2>
         </button>
 
         <TransitionLink to="/services" className={styles.ctaBlockPink}>
           <div className={styles.ctaTextTop}>
-            <strong>{ctaMasterplan.topBold}</strong>
-            <span>{ctaMasterplan.topItalic}</span>
+            <strong>{ctaReview.topBold}</strong>
+            <span>{ctaReview.topItalic}</span>
           </div>
-          <div className={styles.ctaHeadingContainer}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '8px' }}>
-              <polyline points="9 8 9 14 19 14"></polyline>
-              <polyline points="15 10 19 14 15 18"></polyline>
-            </svg>
-            <div className={styles.ctaHeadingPinkGroup}>
-              {ctaMasterplan.heading.split(/\s+/).slice(0, -1).join(" ") && (
-                <h2 className={styles.ctaHeading}>{ctaMasterplan.heading.split(/\s+/).slice(0, -1).join(" ")}</h2>
-              )}
-              <h2 className={styles.ctaHeadingUnderlined}>{ctaMasterplan.heading.split(/\s+/).slice(-1)[0]}</h2>
-            </div>
-          </div>
+          <h2 className={styles.ctaHeading}>{ctaReview.heading}</h2>
         </TransitionLink>
       </section>
 

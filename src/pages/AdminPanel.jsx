@@ -153,7 +153,7 @@ const PAGE_CONFIG = {
     ],
   },
   workDetail: {
-    label: "Work Detail",
+    label: "Work Detail (Template)",
     icon: ICON.workDetail,
     sections: [
       {
@@ -164,24 +164,6 @@ const PAGE_CONFIG = {
           { name: "industryLabel", label: "Industry Label", type: "text" },
           { name: "servicesLabel", label: "Services Label", type: "text" },
           { name: "servicesValue", label: "Services Value", type: "text" },
-        ],
-      },
-      {
-        key: "cta.sendRequest",
-        title: "CTA – Send Request",
-        fields: [
-          { name: "topBold", label: "Top Bold", type: "text" },
-          { name: "topItalic", label: "Top Italic", type: "text" },
-          { name: "heading", label: "Heading", type: "text" },
-        ],
-      },
-      {
-        key: "cta.masterplan",
-        title: "CTA – Brand Masterplan",
-        fields: [
-          { name: "topBold", label: "Top Bold", type: "text" },
-          { name: "topItalic", label: "Top Italic", type: "textarea" },
-          { name: "heading", label: "Heading", type: "text" },
         ],
       },
     ],
@@ -205,24 +187,6 @@ const PAGE_CONFIG = {
         type: "list",
         fields: [
           { name: "text", label: "Paragraph", type: "textarea" },
-        ],
-      },
-      {
-        key: "cta.sendRequest",
-        title: "CTA – Send Request",
-        fields: [
-          { name: "topBold", label: "Top Bold", type: "text" },
-          { name: "topItalic", label: "Top Italic", type: "text" },
-          { name: "heading", label: "Heading", type: "text" },
-        ],
-      },
-      {
-        key: "cta.masterplan",
-        title: "CTA – Brand Masterplan",
-        fields: [
-          { name: "topBold", label: "Top Bold", type: "text" },
-          { name: "topItalic", label: "Top Italic", type: "textarea" },
-          { name: "heading", label: "Heading", type: "text" },
         ],
       },
     ],
@@ -638,35 +602,63 @@ function FieldInput({ field, value, onChange }) {
     const images = Array.isArray(value) ? value : (value ? [value] : []);
     const fileInputRef = useRef(null);
     const [uploading, setUploading] = useState(false);
+    const [dragActive, setDragActive] = useState(false);
 
-    const handleFile = async (file) => {
-      if (!file) return;
+    const handleFiles = async (files) => {
+      if (!files || files.length === 0) return;
       setUploading(true);
+      const newUrls = [];
       try {
-        const formData = new FormData();
-        formData.append("image", file);
-        
-        const res = await fetch("/api/admin/upload-image", {
-          method: "POST",
-          headers: { "x-admin-key": KEY },
-          body: formData,
-        });
-        
-        if (!res.ok) throw new Error("Upload failed");
-        const data = await res.json();
-        if (data.url) {
-          onChange([...images, data.url]);
+        const fileArray = Array.from(files);
+        for (const file of fileArray) {
+          const formData = new FormData();
+          formData.append("image", file);
+          
+          const res = await fetch("/api/admin/upload-image", {
+            method: "POST",
+            headers: { "x-admin-key": KEY },
+            body: formData,
+          });
+          
+          if (!res.ok) throw new Error("Upload failed");
+          const data = await res.json();
+          if (data.url) {
+            newUrls.push(data.url);
+          }
+        }
+        if (newUrls.length > 0) {
+          onChange([...images, ...newUrls]);
         }
       } catch (err) {
         console.error("Upload error:", err);
-        alert("Failed to upload image. Please try again.");
+        alert("Failed to upload one or more images. Please try again.");
       } finally {
         setUploading(false);
+        if (fileInputRef.current) fileInputRef.current.value = "";
       }
     };
 
     const handleRemoveImage = (indexToRemove) => {
       onChange(images.filter((_, idx) => idx !== indexToRemove));
+    };
+
+    const handleDrag = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.type === "dragenter" || e.type === "dragover") {
+        setDragActive(true);
+      } else if (e.type === "dragleave") {
+        setDragActive(false);
+      }
+    };
+
+    const handleDrop = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragActive(false);
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        handleFiles(e.dataTransfer.files);
+      }
     };
 
     return (
@@ -691,39 +683,44 @@ function FieldInput({ field, value, onChange }) {
           </div>
         )}
         
-        <input
-          type="file"
-          ref={fileInputRef}
-          accept="image/*"
-          style={{ display: "none" }}
-          onChange={(e) => {
-            if (e.target.files && e.target.files[0]) {
-              handleFile(e.target.files[0]);
-            }
-          }}
-        />
-        
-        <button
-          type="button"
-          className={styles.addGalleryImageBtn}
-          disabled={uploading}
+        <div 
+          className={`${styles.galleryDropZone} ${dragActive ? styles.galleryDropZoneActive : ""}`}
+          onDragEnter={handleDrag}
+          onDragLeave={handleDrag}
+          onDragOver={handleDrag}
+          onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
         >
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            multiple
+            style={{ display: "none" }}
+            onChange={(e) => {
+              if (e.target.files && e.target.files.length > 0) {
+                handleFiles(e.target.files);
+              }
+            }}
+          />
+          
           {uploading ? (
-            <>
+            <div className={styles.uploadingState}>
               <div className={styles.gallerySpinner} />
-              Uploading...
-            </>
+              <p>Uploading files...</p>
+            </div>
           ) : (
-            <>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: "6px" }}>
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
+            <div className={styles.dropZoneContent}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginBottom: "8px", opacity: 0.5 }}>
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
               </svg>
-              Add Image
-            </>
+              <p><strong>Click to upload</strong> or drag and drop</p>
+              <p style={{ fontSize: "12px", opacity: 0.5, marginTop: "4px" }}>Images only (Multiple allowed)</p>
+            </div>
           )}
-        </button>
+        </div>
       </div>
     );
   }

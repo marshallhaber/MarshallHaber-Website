@@ -30,8 +30,9 @@ export default function About() {
   const taglineBold = getContent(sections, "hero.taglineBold", defaults.about.hero.taglineBold);
   const taglineItalic = getContent(sections, "hero.taglineItalic", defaults.about.hero.taglineItalic);
   const paragraphs = getContent(sections, "paragraphs", defaults.about.paragraphs);
-  const ctaSendRequest = getContent(sections, "cta.sendRequest", defaults.about.cta.sendRequest);
-  const ctaMasterplan = getContent(sections, "cta.masterplan", defaults.about.cta.masterplan);
+  const { sections: homeSections } = usePageContent("home");
+  const ctaInquiry = getContent(homeSections, "cta.left", defaults.home.cta.left);
+  const ctaReview = getContent(homeSections, "cta.right", defaults.home.cta.right);
 
   useEffect(() => {
     document.body.style.backgroundColor = '#fbf0f2';
@@ -92,9 +93,9 @@ export default function About() {
       <section
         ref={sectionRef}
         className={styles.heroSection}
-        onMouseMove={handleMouseMove}
+        // onMouseMove={handleMouseMove}
       >
-        {trail.map((img) => (
+        {/* {trail.map((img) => (
           <motion.img
             key={img.id}
             src={img.src}
@@ -106,7 +107,7 @@ export default function About() {
             exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.8, ease: "easeOut" } }}
             transition={{ duration: 0.4, ease: "backOut" }}
           />
-        ))}
+        ))} */}
 
         <div className={styles.textContent}>
           {paragraphs.map((p, i) => (
@@ -128,10 +129,10 @@ export default function About() {
           style={{ border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}
         >
           <div className={styles.ctaTextTop}>
-            <strong>{ctaSendRequest.topBold}</strong>
-            <span>{ctaSendRequest.topItalic}</span>
+            <strong>{ctaInquiry.topBold}</strong>
+            <span>{ctaInquiry.topItalic}</span>
           </div>
-          <h2 className={styles.ctaHeading}>{ctaSendRequest.heading}</h2>
+          <h2 className={styles.ctaHeading}>{ctaInquiry.heading}</h2>
         </button>
 
         <button
@@ -140,21 +141,10 @@ export default function About() {
           style={{ border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', width: '100%' }}
         >
           <div className={styles.ctaTextTop}>
-            <strong>{ctaMasterplan.topBold}</strong>
-            <span>{ctaMasterplan.topItalic}</span>
+            <strong>{ctaReview.topBold}</strong>
+            <span>{ctaReview.topItalic}</span>
           </div>
-          <div className={styles.ctaHeadingContainer}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '8px' }}>
-              <polyline points="9 8 9 14 19 14"></polyline>
-              <polyline points="15 10 19 14 15 18"></polyline>
-            </svg>
-            <div className={styles.ctaHeadingPinkGroup}>
-              {ctaMasterplan.heading.split(/\s+/).slice(0, -1).join(" ") && (
-                <h2 className={styles.ctaHeading}>{ctaMasterplan.heading.split(/\s+/).slice(0, -1).join(" ")}</h2>
-              )}
-              <h2 className={styles.ctaHeadingUnderlined}>{ctaMasterplan.heading.split(/\s+/).slice(-1)[0]}</h2>
-            </div>
-          </div>
+          <h2 className={styles.ctaHeading}>{ctaReview.heading}</h2>
         </button>
       </section>
 
