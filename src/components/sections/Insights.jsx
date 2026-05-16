@@ -152,16 +152,18 @@ export default function Insights() {
                         {card.brand}
                       </p>
 
-                      <p
-                        className="text-sm mb-3 tracking-wide leading-snug"
-                        style={{
-                          fontFamily: "'Nib Pro', serif",
-                          fontStyle: "italic",
-                          color: card.labelColor || "inherit",
-                        }}
-                      >
-                        {card.label}
-                      </p>
+                      {card.label && card.label !== (card.titleLarge || card.title) && (
+                        <p
+                          className="text-sm mb-3 tracking-wide leading-snug"
+                          style={{
+                            fontFamily: "'Nib Pro', serif",
+                            fontStyle: "italic",
+                            color: card.labelColor || "inherit",
+                          }}
+                        >
+                          {card.label}
+                        </p>
+                      )}
 
                       <h3
                         className="font-bold leading-tight tracking-tight"

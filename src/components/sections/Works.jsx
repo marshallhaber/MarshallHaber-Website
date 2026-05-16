@@ -30,21 +30,21 @@ export default function Works() {
         description: p.description || '',
         image: p.imageUrl || '',
         video: p.videoUrl || '',
-        featured: p.featured === true || p.featured === "true",
+        featuredOnHome: p.featuredOnHome === true || p.featuredOnHome === "true",
       }));
 
-    const explicitlyFeatured = cmsProjects.filter(p => p.featured);
+    const explicitlyFeatured = cmsProjects.filter(p => p.featuredOnHome);
     if (explicitlyFeatured.length > 0) {
-      return explicitlyFeatured;
+      return explicitlyFeatured.slice(0, 8);
     }
-    return cmsProjects.slice(0, 6);
+    return cmsProjects.slice(0, 8);
   }, [cmsRawProjects]);
 
   return (
     <div ref={containerRef} className="w-full px-6 pt-12 pb-10 bg-[#fbf0f2] text-[#020817]">
       <Reveal>
         <h2
-          className="text-[clamp(1.8rem,8vw,4.5rem)] md:text-[5.5vw] lg:text-[4.5vw] font-bold leading-[1.1] mb-16 text-inherit text-center"
+          className="text-[clamp(1.6rem,5vw,3.2rem)] md:text-[4vw] lg:text-[3.2vw] font-bold leading-[1.1] mb-16 text-inherit text-center max-w-none mx-auto"
           style={{ fontFamily: "'PP Mori', sans-serif" }}
         >
           {headingBold} <br className="hidden md:block" /> <span className="italic font-normal" style={{ fontFamily: "'Nib Pro', serif" }}>{headingItalic}</span>

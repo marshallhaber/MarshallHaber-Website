@@ -3,7 +3,7 @@ import styles from "./AdminPanel.module.css";
 import { invalidatePageContent } from "../hooks/usePageContent";
 import { defaults } from "../lib/contentDefaults";
 
-const API = "/api/admin";
+const API = "http://localhost:5000/api/admin";
 const KEY = "234583419264838";
 const headers = { "x-admin-key": KEY };
 const jsonHeaders = { "x-admin-key": KEY, "Content-Type": "application/json" };
@@ -138,7 +138,8 @@ const PAGE_CONFIG = {
         fields: [
           { name: "title", label: "Title", type: "text" },
           { name: "slug", label: "URL Slug", type: "text" },
-          { name: "featured", label: "Feature this work (Show on Home & Featured Tab)", type: "boolean" },
+          { name: "featuredOnWork", label: "Feature on Work Page (Featured Tab)", type: "boolean" },
+          { name: "featuredOnHome", label: "Feature on Home Page", type: "boolean" },
           { name: "subtitle", label: "Subtitle", type: "text" },
           { name: "client", label: "Client", type: "text" },
           { name: "category", label: "Category", type: "text" },
@@ -850,7 +851,7 @@ export default function AdminPanel() {
   const [activePage, setActivePage] = useState("home");
   const [pageData, setPageData] = useState({});
   const [saving, setSaving] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
 
   const config = PAGE_CONFIG[activePage];

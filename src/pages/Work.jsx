@@ -39,7 +39,7 @@ export default function Work() {
           description: p.description || '',
           image: p.imageUrl || '',
           video: p.videoUrl || '',
-          featured: p.featured === true || p.featured === "true",
+          featuredOnWork: p.featuredOnWork === true || p.featuredOnWork === "true",
           fromCms: true,
         })),
     [cmsRawProjects]
@@ -62,7 +62,7 @@ export default function Work() {
   }, [allProjects]);
 
   const featuredProjects = useMemo(() => {
-    const explicitlyFeatured = allProjects.filter(p => p.featured);
+    const explicitlyFeatured = allProjects.filter(p => p.featuredOnWork);
     if (explicitlyFeatured.length > 0) {
       return explicitlyFeatured;
     }
@@ -119,10 +119,10 @@ export default function Work() {
       </section>
 
       {/* Content */}
-      {activeTab === 'Featured' && (
+      {(activeTab === 'Featured' || activeTab === 'All projects') && (
         <section className={styles.workGrid}>
           <motion.div className={styles.grid}>
-            {featuredProjects.map((project, i) => (
+            {(activeTab === 'Featured' ? featuredProjects : allProjects).map((project, i) => (
               <motion.div
                 key={project.slug}
                 initial={{ opacity: 0, y: 30 }}
@@ -151,9 +151,9 @@ export default function Work() {
                     )}
                   </div>
                   <div className={styles.cardContent}>
-                    <h2 className={styles.cardTitle}>{project.client} | {project.title}</h2>
+                    <h2 className={styles.cardTitle}>{project.title} <span className={styles.cardDesc}>| {project.subtitle}</span></h2>
                     <p className={styles.cardSubtitle}>
-                      {project.category} {project.services ? `– ${project.services}` : '– Visual Identity – Website'}
+                      {project.category}
                     </p>
                   </div>
                 </TransitionLink>
@@ -163,56 +163,35 @@ export default function Work() {
         </section>
       )}
 
-      {(activeTab === 'All projects' || activeTab === 'Industries') && (
+      {activeTab === 'Industries' && (
         <div
           ref={listRef}
           className={styles.listWrap}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setHoveredSlug(null)}
         >
-          {activeTab === 'All projects' && (
-            <motion.div
-              className={styles.rowList}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.35 }}
-            >
-              {allProjects.map(p => (
-                <WorkRow
-                  key={p.slug}
-                  project={p}
-                  rightCol={p.services || getContent(sections, "metaLabel", defaults.work.metaLabel)}
-                  onEnter={() => setHoveredSlug(p.slug)}
-                  onLeave={() => setHoveredSlug(null)}
-                />
-              ))}
-            </motion.div>
-          )}
-
-          {activeTab === 'Industries' && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.35 }}
-            >
-              {grouped.map(([category, items]) => (
-                <div key={category} className={styles.group}>
-                  <h3 className={styles.groupHeading}>{category}</h3>
-                  <div className={styles.rowList}>
-                    {items.map(p => (
-                      <WorkRow
-                        key={p.slug}
-                        project={p}
-                        rightCol={category}
-                        onEnter={() => setHoveredSlug(p.slug)}
-                        onLeave={() => setHoveredSlug(null)}
-                      />
-                    ))}
-                  </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.35 }}
+          >
+            {grouped.map(([category, items]) => (
+              <div key={category} className={styles.group}>
+                <h3 className={styles.groupHeading}>{category}</h3>
+                <div className={styles.rowList}>
+                  {items.map(p => (
+                    <WorkRow
+                      key={p.slug}
+                      project={p}
+                      rightCol={category}
+                      onEnter={() => setHoveredSlug(p.slug)}
+                      onLeave={() => setHoveredSlug(null)}
+                    />
+                  ))}
                 </div>
-              ))}
-            </motion.div>
-          )}
+              </div>
+            ))}
+          </motion.div>
 
           <AnimatePresence>
             {hoveredProject && (

@@ -38,10 +38,10 @@ export default function About() {
         <div className="grid grid-cols-1 md:grid-cols-12 w-full gap-20">
 
           {/* Left Column */}
-          <div className="md:col-span-7 flex flex-col justify-center">
+          <div className="md:col-span-7 flex flex-col justify-center items-center text-center">
             <Reveal>
               <h2
-                className="text-[2rem] sm:text-[2.5rem] md:text-[72px] font-semibold tracking-tighter mb-12"
+                className="text-[2rem] sm:text-[2.5rem] md:text-[72px] font-semibold tracking-tighter mb-12 text-center"
                 style={{ fontFamily: "'PP Mori', sans-serif", lineHeight: 1 }}
               >
                 {heading.split("\n").map((line, i, arr) => (

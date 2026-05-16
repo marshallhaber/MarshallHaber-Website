@@ -7,7 +7,7 @@
 
 /* ── Hero ── */
 .hero {
-  padding: 13rem 2rem 4rem;
+  padding: 9rem 2rem 4rem;
   text-align: center;
 }
 
@@ -58,6 +58,11 @@
   cursor: pointer;
   transition: all 0.25s ease;
   letter-spacing: 0.02em;
+}
+ 
+.filterBtn:first-child {
+  padding-left: 2.2rem;
+  padding-right: 2.2rem;
 }
 
 .filterBtn:hover {

@@ -191,17 +191,18 @@ export default function InsightDetail() {
             return (
               <h2
                 key={idx}
-                className="text-3xl md:text-[40px] font-bold mb-6 mt-16"
+                className="text-3xl md:text-[40px] font-extrabold mb-6 mt-16"
                 style={{ fontFamily: "'PP Mori', sans-serif", letterSpacing: "-0.02em" }}
               >
                 {block.text}
               </h2>
             );
           case 'paragraph':
+            const isFirstParagraph = !renderBlocks.slice(0, idx).some(b => b.type === 'paragraph');
             return (
               <p
                 key={idx}
-                className="text-lg md:text-[20px] leading-[1.7] mb-6"
+                className={isFirstParagraph ? "text-xl md:text-2xl font-medium mb-8 text-[#71717a]" : "text-lg md:text-[20px] leading-[1.7] mb-6"}
                 style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
               >
                 {block.text}
