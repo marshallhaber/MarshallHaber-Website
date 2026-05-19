@@ -87,8 +87,10 @@ router.put("/pages/:page", adminAuth, async (req, res) => {
   }
 });
 
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 const ContactSubmission = require("../models/ContactSubmission");
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // POST contact submission
 router.post("/contact", async (req, res) => {
@@ -105,10 +107,10 @@ router.post("/contact", async (req, res) => {
     });
     await submission.save();
 
-    // Prepare email notification
-    const mailOptions = {
-      from: `"Marshall Haber Creative Group" <noreply@marshallhaber.com>`,
-      to: "marshall@marshallhaber.com, frontdesk@marshallhaber.com",
+    // Send email notification via Resend
+    const { data, error } = await resend.emails.send({
+      from: "Marshall Haber Creative Group <noreply@updates.marshallhaber.com>",
+      to: ["marshall@marshallhaber.com"],
       subject: `New Lead Submitted: ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px; background-color: #fbf0f2; color: #020817;">
@@ -145,25 +147,12 @@ router.post("/contact", async (req, res) => {
           </p>
         </div>
       `
-    };
-
-    // Configure transporter
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.gmail.com",
-      port: parseInt(process.env.SMTP_PORT, 10) || 587,
-      secure: process.env.SMTP_SECURE === "true",
-      auth: {
-        user: process.env.SMTP_USER || "",
-        pass: process.env.SMTP_PASS || ""
-      }
     });
 
-    // Check if SMTP is configured, else log it
-    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-      await transporter.sendMail(mailOptions);
-      console.log("Notification email sent successfully to marshall@marshallhaber.com & frontdesk@marshallhaber.com");
+    if (error) {
+      console.error("Resend email error:", error);
     } else {
-      console.warn("SMTP credentials not configured in environment. Saved submission to DB without email dispatch.");
+      console.log("Notification email sent successfully to marshall@marshallhaber.com — ID:", data.id);
     }
 
     res.status(201).json({ success: true, submission });
