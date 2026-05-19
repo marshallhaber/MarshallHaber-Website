@@ -167,13 +167,7 @@ export default function ContactModal({ isOpen, onClose }) {
                                                     <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
                                                 </svg>
                                             </button>
-                                            <button
-                                                type="button"
-                                                className={styles.closePillBtn}
-                                                onClick={requestClose}
-                                            >
-                                                Close
-                                            </button>
+
                                         </div>
 
                                     <form onSubmit={handleSubmit}>

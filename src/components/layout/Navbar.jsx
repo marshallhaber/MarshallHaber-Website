@@ -208,7 +208,7 @@ const DesktopMenu = () => {
         layout
         style={staticStyle}
         transition={{ layout: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }}
-        className="px-7 py-4 rounded-full shadow-sm font-bold text-sm flex items-center overflow-hidden h-[52px] cursor-pointer"
+        className="px-7 py-4 rounded-full shadow-sm text-sm flex items-center overflow-hidden h-[52px] cursor-pointer"
       >
         <div className="relative h-5 overflow-hidden flex flex-col items-center">
           <AnimatePresence mode="wait">
@@ -218,7 +218,7 @@ const DesktopMenu = () => {
                 initial={{ y: 20 }}
                 animate={{ y: 0 }}
                 exit={{ y: -20 }}
-                className="whitespace-nowrap"
+                className="whitespace-nowrap font-bold"
               >
                 {menuButtonLabel}
               </motion.span>
@@ -228,7 +228,7 @@ const DesktopMenu = () => {
                 initial={{ y: 20 }}
                 animate={{ y: 0 }}
                 exit={{ y: -20 }}
-                className="flex gap-6 items-center whitespace-nowrap"
+                className="flex gap-6 items-center whitespace-nowrap h-5"
               >
                 {menuItems.map((item) => {
                   const isActive = pathname === item.to || (item.to !== "/" && pathname.startsWith(item.to));
@@ -238,10 +238,19 @@ const DesktopMenu = () => {
                     ref={(el) => (itemRefs.current[item.label] = el)}
                     onMouseEnter={() => handleItemEnter(item.label)}
                     onMouseLeave={handleItemLeave}
-                    className={`relative flex items-center gap-0.5 transition-all cursor-pointer ${isActive ? "font-bold opacity-100" : "font-normal opacity-50 hover:opacity-100 hover:font-bold"}`}
+                    className={`relative flex items-center gap-0.5 transition-all cursor-pointer h-5 ${isActive ? "font-bold opacity-100" : "font-normal opacity-50 hover:opacity-100 hover:font-bold"}`}
                   >
-                    <TransitionLink to={item.to}>
-                      <span>{item.label}</span>
+                    <TransitionLink to={item.to} className="relative flex items-center h-full">
+                      <span className="relative py-1 flex items-center justify-center">
+                        {item.label}
+                        {isActive && (
+                          <motion.span
+                            layoutId="activeNavDot"
+                            className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-current"
+                            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                          />
+                        )}
+                      </span>
                     </TransitionLink>
                     {item.sub.length > 0 && (
                       <motion.svg
@@ -420,25 +429,32 @@ export default function Navbar() {
       style={{ position: "relative", zIndex: 9999 }}
     >
       <div className="md:hidden block pointer-events-auto leading-none mt-4 relative h-6 w-40">
-        <TransitionLink to="/">
-          <img
-            src="/logonewlong.png"
-            alt="Marshall Haber Creative Group"
-            className="absolute left-0 top-0 h-6 w-auto cursor-pointer transition-all duration-700 ease-in-out"
-            style={{
-              opacity: showCenterLogo ? 0 : 1,
-              filter: isLightBg ? "invert(1) brightness(0)" : "none",
-            }}
-          />
-          <img
-            src="/logo.png"
-            alt="MHCG"
-            className="absolute left-0 top-0 h-6 w-auto cursor-pointer transition-all duration-700 ease-in-out"
-            style={{
-              opacity: showCenterLogo ? 1 : 0,
-              filter: isLightBg ? "brightness(0)" : "invert(1)",
-            }}
-          />
+        <TransitionLink to="/" className="block w-full h-full relative">
+          <div className="relative flex items-center h-full w-full">
+            <img
+              src="/logonewlong.png"
+              alt=""
+              className="h-6 w-auto opacity-0 pointer-events-none"
+            />
+            <img
+              src="/logonewlong.png"
+              alt="Marshall Haber Creative Group"
+              className="absolute left-0 top-0 h-6 w-auto cursor-pointer transition-all duration-700 ease-in-out"
+              style={{
+                opacity: showCenterLogo ? 0 : 1,
+                filter: isLightBg ? "invert(1) brightness(0)" : "none",
+              }}
+            />
+            <img
+              src="/logo.png"
+              alt="MHCG"
+              className="absolute left-0 top-0 h-6 w-auto cursor-pointer transition-all duration-700 ease-in-out"
+              style={{
+                opacity: showCenterLogo ? 1 : 0,
+                filter: isLightBg ? "brightness(0)" : "invert(1)",
+              }}
+            />
+          </div>
         </TransitionLink>
       </div>
 
@@ -455,11 +471,11 @@ export default function Navbar() {
 
       {/* Center: Desktop Logo */}
       <div className="absolute top-8 left-1/2 -translate-x-1/2 hidden md:flex items-center justify-center pointer-events-auto h-28">
-        <TransitionLink to="/">
-          <div className="relative flex items-center justify-center">
+        <TransitionLink to="/" className="relative block h-28">
+          <div className="relative flex items-center justify-center h-full">
             {/* Invisible placeholder for maintaining container dimensions */}
             <img
-              src="/footerLogoBlack.png"
+              src="/logonewlong.png"
               alt=""
               className="h-28 w-auto opacity-0 pointer-events-none"
             />
