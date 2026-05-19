@@ -46,7 +46,7 @@ export default function ClientSection() {
                     className={styles.clientLogoImg}
                     style={{
                       transform: `scale(${scaleFactor})`,
-                      transformOrigin: "left center",
+                      transformOrigin: "center center",
                     }}
                   />
                 </FadeIn>

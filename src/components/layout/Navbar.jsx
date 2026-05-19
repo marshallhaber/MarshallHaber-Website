@@ -370,23 +370,30 @@ export default function Navbar() {
 
     // Detect light/cream/offwhite page by checking body background color
     const checkBg = () => {
-      const bg = document.body.style.backgroundColor;
+      if (pathname !== "/") {
+        setIsLightBg(true);
+        return;
+      }
+      const inlineBg = document.body.style.backgroundColor;
+      const computedBg = typeof window !== "undefined" ? window.getComputedStyle(document.body).backgroundColor : "";
+      
       const lightBackgrounds = [
         "rgb(251, 240, 242)", "#FBF0F2", "#fbf0f2",
         "rgb(244, 237, 217)", "#F4EDD9", "#f4edd9",
         "rgb(244, 240, 234)", "#F4F0EA", "#f4f0ea",
         "rgb(255, 255, 255)", "#FFFFFF", "#ffffff", "white",
       ];
-      setIsLightBg(lightBackgrounds.includes(bg));
+      
+      const isLight = lightBackgrounds.includes(inlineBg) || lightBackgrounds.includes(computedBg);
+      setIsLightBg(isLight);
     };
     checkBg();
 
     // Also watch .dark-section for home page scroll transitions
     const lightSection = document.querySelector(".dark-section");
     const bgObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsLightBg(true);
-        else checkBg();
+      () => {
+        checkBg();
       },
       { threshold: 0.05 }
     );
@@ -402,7 +409,7 @@ export default function Navbar() {
       if (lightSection) bgObserver.disconnect();
       mutObs.disconnect();
     };
-  }, [scrollY, useShortLogoByDefault]);
+  }, [scrollY, useShortLogoByDefault, pathname]);
 
   return (
     <motion.div
@@ -420,7 +427,7 @@ export default function Navbar() {
             className="absolute left-0 top-0 h-6 w-auto cursor-pointer transition-all duration-700 ease-in-out"
             style={{
               opacity: showCenterLogo ? 0 : 1,
-              filter: isLightBg ? "invert(1)" : "none",
+              filter: isLightBg ? "invert(1) brightness(0)" : "none",
             }}
           />
           <img
@@ -429,7 +436,7 @@ export default function Navbar() {
             className="absolute left-0 top-0 h-6 w-auto cursor-pointer transition-all duration-700 ease-in-out"
             style={{
               opacity: showCenterLogo ? 1 : 0,
-              filter: isLightBg ? "invert(0)" : "invert(1)",
+              filter: isLightBg ? "brightness(0)" : "invert(1)",
             }}
           />
         </TransitionLink>
@@ -462,7 +469,7 @@ export default function Navbar() {
               className="absolute h-28 w-auto cursor-pointer transition-all duration-700 ease-in-out"
               style={{
                 opacity: showCenterLogo ? 0 : 1,
-                filter: isLightBg ? "invert(1)" : "none",
+                filter: isLightBg ? "invert(1) brightness(0)" : "none",
               }}
             />
             <img
@@ -471,7 +478,7 @@ export default function Navbar() {
               className="absolute h-16 w-auto cursor-pointer transition-all duration-700 ease-in-out"
               style={{
                 opacity: showCenterLogo ? 1 : 0,
-                filter: isLightBg ? "invert(0)" : "invert(1)",
+                filter: isLightBg ? "brightness(0)" : "invert(1)",
               }}
             />
           </div>

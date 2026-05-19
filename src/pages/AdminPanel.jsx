@@ -20,6 +20,7 @@ const ICON = {
   workDetail: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 12h6M9 8h6M9 16h4" /></svg>,
   insights: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" /></svg>,
   comingSoon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
+  leads: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><circle cx="9" cy="15" r="1" /><path d="M9 11v2" /></svg>,
 };
 
 // ─── Page definitions: what sections each page has ───
@@ -869,13 +870,44 @@ export default function AdminPanel() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
-
-  const config = PAGE_CONFIG[activePage];
+  const [submissions, setSubmissions] = useState([]);
+  const [loadingLeads, setLoadingLeads] = useState(false);
 
   const showToast = useCallback((msg, type = "success") => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 3000);
   }, []);
+
+  async function loadLeads() {
+    setLoadingLeads(true);
+    try {
+      const res = await fetch(`${API}/contact`);
+      if (res.ok) {
+        const data = await res.json();
+        setSubmissions(data);
+      }
+    } catch (err) {
+      showToast("Failed to load submissions", "error");
+    }
+    setLoadingLeads(false);
+  }
+
+  async function handleDeleteLead(id) {
+    if (!window.confirm("Are you sure you want to delete this submission?")) return;
+    try {
+      const res = await fetch(`${API}/contact/${id}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        setSubmissions(prev => prev.filter(s => s._id !== id));
+        showToast("Submission deleted");
+      }
+    } catch (err) {
+      showToast("Delete failed", "error");
+    }
+  }
+
+  const config = PAGE_CONFIG[activePage] || { label: "Form Entries", sections: [] };
 
   async function loadPage(page) {
     setLoading(true);
@@ -907,7 +939,9 @@ export default function AdminPanel() {
   }
 
   useEffect(() => {
-    loadPage(activePage);
+    if (activePage !== "leads") {
+      loadPage(activePage);
+    }
   }, [activePage]);
 
   function updateSection(sectionKey, value) {
@@ -961,6 +995,17 @@ export default function AdminPanel() {
           ))}
         </nav>
 
+        <div className={styles.navLabel} style={{ marginTop: "1.5rem" }}>Submissions</div>
+        <nav className={styles.nav}>
+          <button
+            className={`${styles.navItem} ${activePage === "leads" ? styles.active : ""}`}
+            onClick={() => setActivePage("leads")}
+          >
+            {ICON.leads}
+            <span>Form Entries</span>
+          </button>
+        </nav>
+
         <div className={styles.sidebarFooter}>
           <div className={styles.dot} />
           <span>API Connected</span>
@@ -975,19 +1020,80 @@ export default function AdminPanel() {
 
         <header className={styles.header}>
           <div>
-            <h1>{config.label}</h1>
-            <p>Edit content for the {config.label} page</p>
+            <h1>{activePage === "leads" ? "Form Entries" : config.label}</h1>
+            <p>
+              {activePage === "leads"
+                ? "View and manage incoming contact form submissions"
+                : `Edit content for the ${config.label} page`}
+            </p>
           </div>
-          <button className={styles.publishBtn} onClick={handleSave} disabled={saving}>
-            {saving ? (
-              <><div className={styles.btnSpinner} />Saving...</>
-            ) : (
-              <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>Save Changes</>
-            )}
-          </button>
+          {activePage === "leads" ? (
+            <button className={styles.publishBtn} onClick={loadLeads} disabled={loadingLeads}>
+              Refresh Entries
+            </button>
+          ) : (
+            <button className={styles.publishBtn} onClick={handleSave} disabled={saving}>
+              {saving ? (
+                <><div className={styles.btnSpinner} />Saving...</>
+              ) : (
+                <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>Save Changes</>
+              )}
+            </button>
+          )}
         </header>
 
-        {loading ? (
+        {activePage === "leads" ? (
+          loadingLeads ? (
+            <div className={styles.loadingState}><div className={styles.spinner} /></div>
+          ) : (
+            <div className={styles.sections} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {submissions.length === 0 ? (
+                <div style={{ padding: '4rem 2rem', textAlign: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', color: 'rgba(255,255,255,0.5)', fontSize: '1.1rem' }}>
+                  No lead entries submitted yet.
+                </div>
+              ) : (
+                submissions.map((lead) => (
+                  <div key={lead._id} style={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', color: '#fff' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                      <div>
+                        <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold', color: '#38bdf8' }}>{lead.name}</h3>
+                        <p style={{ margin: '0.25rem 0 0', opacity: 0.8, fontSize: '0.9rem' }}>
+                          <a href={`mailto:${lead.email}`} style={{ color: '#60a5fa', textDecoration: 'underline' }}>{lead.email}</a>
+                          {lead.phone && `  •  ${lead.phone}`}
+                        </p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>
+                          {new Date(lead.createdAt).toLocaleString()}
+                        </span>
+                        <button 
+                          onClick={() => handleDeleteLead(lead._id)}
+                          style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                    {lead.services && lead.services.length > 0 && (
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        {lead.services.map(s => (
+                          <span key={s} style={{ background: '#0f172a', color: '#38bdf8', padding: '0.2rem 0.6rem', borderRadius: '9999px', fontSize: '0.75rem', border: '1px solid #38bdf8' }}>
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {lead.message && (
+                      <div style={{ background: '#0f172a', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', fontSize: '0.95rem', whiteSpace: 'pre-wrap', lineHeight: '1.5', opacity: 0.9 }}>
+                        {lead.message}
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          )
+        ) : loading ? (
           <div className={styles.loadingState}><div className={styles.spinner} /></div>
         ) : (
           <div className={styles.sections}>

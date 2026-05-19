@@ -8,12 +8,14 @@
 /* Est. 2015 Hero */
 .estSection {
   width: 100%;
-  height: 100dvh;
+  padding-top: 20vh;
+  padding-bottom: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
   box-sizing: border-box;
 }
 

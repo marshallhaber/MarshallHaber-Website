@@ -80,7 +80,7 @@ export default function ContactModal({ isOpen, onClose }) {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const payload = {
             services: Array.from(services),
@@ -89,7 +89,17 @@ export default function ContactModal({ isOpen, onClose }) {
             phone,
             message,
         };
-        console.log('Project request submitted:', payload);
+        try {
+            await fetch('/api/admin/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+        } catch (err) {
+            console.error('Error submitting form:', err);
+        }
         setStage('submitted');
     };
 

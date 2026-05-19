@@ -6,9 +6,7 @@ import { defaults } from "../../lib/contentDefaults";
 
 export default function Footer() {
   const { pathname } = useLocation();
-  const creamPaths = ["/about", "/contact", "/services", "/clients", "/work", "/legal"];
-  const isCreamPage =
-    creamPaths.includes(pathname) || pathname.startsWith("/work/");
+  const isCreamPage = pathname !== "/";
 
   const bgClass = isCreamPage ? "bg-[#fbf0f2] text-[#020817]" : "bg-[#020817] text-[#fbf0f2]";
   const borderClass = isCreamPage ? "border-[#020817]/20" : "border-[#fbf0f2]/20";
@@ -19,7 +17,7 @@ export default function Footer() {
   const f = getContent(sections, "footer", defaults.global.footer);
 
   return (
-    <footer id="main-footer" className={`w-full pt-20 pb-6 px-6 relative overflow-hidden z-50 ${bgClass}`}>
+    <footer id="main-footer" className={`w-full pt-10 md:pt-20 pb-4 md:pb-6 px-4 md:px-6 relative overflow-hidden z-50 ${bgClass}`}>
 
       {/* Grid Links Section */}
       <div className="w-full flex flex-col md:flex-row justify-between mb-16 md:mb-32 text-base font-medium tracking-tight">
@@ -67,7 +65,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Legal Links */}
-      <div className={`w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-[10px] font-bold uppercase tracking-widest px-4 border-t ${borderClass} pt-8 mt-12`}>
+      <div className={`w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-[10px] font-bold uppercase tracking-widest px-4 border-t ${borderClass} pt-6 md:pt-8 mt-6 md:mt-12`}>
         <div className="w-full md:w-auto flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
           <p className="leading-relaxed">{f.copyright}</p>
           <div className="flex items-center gap-3 mt-1 md:mt-0">

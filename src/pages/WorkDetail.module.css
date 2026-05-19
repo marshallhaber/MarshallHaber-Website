@@ -105,11 +105,7 @@
 }
 
 .infoDivider {
-  width: 100%;
-  height: 1px;
-  background-color: #020817;
-  opacity: 0.2;
-  margin-bottom: 1rem;
+  display: none;
 }
 
 .infoLabel {
@@ -130,7 +126,7 @@
 }
 
 .descriptionSection {
-  max-width: 900px;
+  max-width: 1200px;
   margin-bottom: 5rem;
 }
 
@@ -339,6 +335,10 @@
 }
 
 @media (max-width: 768px) {
+  .moreProjectsGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
   .container {
     padding: 0 2rem;
   }
@@ -483,11 +483,18 @@
     aspect-ratio: 16 / 10;
   }
 
-  .mainImageWrapper,
+  .mainImageWrapper {
+    min-height: auto;
+    height: auto;
+    max-height: none;
+    aspect-ratio: auto;
+  }
+  
   .mainImage {
     min-height: auto;
     height: auto;
-    max-height: 60vh;
-    aspect-ratio: 4 / 3;
+    max-height: none;
+    object-fit: contain;
+    aspect-ratio: auto;
   }
 }
