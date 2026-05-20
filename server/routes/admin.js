@@ -110,7 +110,7 @@ router.post("/contact", async (req, res) => {
     // Send email notification via Resend
     const { data, error } = await resend.emails.send({
       from: "Marshall Haber Creative Group <noreply@updates.marshallhaber.com>",
-      to: ["marshall@marshallhaber.com"],
+      to: ["marshall@marshallhaber.com", "frontdesk@marshallhaber.com", "syedimtiyazali141@gmail.com"],
       subject: `New Lead Submitted: ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px; background-color: #fbf0f2; color: #020817;">
