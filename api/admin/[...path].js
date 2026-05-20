@@ -161,7 +161,7 @@ app.post("/api/admin/contact", async (req, res) => {
     // Prepare email notification
     const mailOptions = {
       from: `"Marshall Haber Creative Group" <noreply@marshallhaber.com>`,
-      to: "marshall@marshallhaber.com, frontdesk@marshallhaber.com",
+      to: "marshall@marshallhaber.com, frontdesk@marshallhaber.com, syedimtiyazali141@gmail.com",
       subject: `New Lead Submitted: ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px; background-color: #fbf0f2; color: #020817;">
@@ -214,7 +214,7 @@ app.post("/api/admin/contact", async (req, res) => {
     // Check if SMTP is configured, else log it
     if (process.env.SMTP_USER && process.env.SMTP_PASS) {
       await transporter.sendMail(mailOptions);
-      console.log("Notification email sent successfully to marshall@marshallhaber.com & frontdesk@marshallhaber.com");
+      console.log("Notification email sent successfully to all recipients");
     } else {
       console.warn("SMTP credentials not configured in environment. Saved submission to DB without email dispatch.");
     }
