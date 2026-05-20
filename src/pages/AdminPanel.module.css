@@ -363,6 +363,7 @@
   overflow: hidden;
   background: #111;
   border: 1px solid #1c1c22;
+  min-height: 100px;
 }
 
 .mediaThumb img,

@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { requireAdmin } = require("../_lib/auth");
 const { parseMultipart } = require("../_lib/parseForm");
-const { uploadBuffer } = require("../_lib/cloudinary");
+const { uploadBuffer } = require("../_lib/imagekit");
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") {

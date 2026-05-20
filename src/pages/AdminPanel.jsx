@@ -872,6 +872,9 @@ export default function AdminPanel() {
   const [toast, setToast] = useState(null);
   const [submissions, setSubmissions] = useState([]);
   const [loadingLeads, setLoadingLeads] = useState(false);
+  const [migrating, setMigrating] = useState(false);
+  const [migrateResult, setMigrateResult] = useState(null);
+  const importInputRef = useRef(null);
 
   const showToast = useCallback((msg, type = "success") => {
     setToast({ msg, type });
@@ -905,6 +908,62 @@ export default function AdminPanel() {
     } catch (err) {
       showToast("Delete failed", "error");
     }
+  }
+
+  async function handleExport() {
+    try {
+      const res = await fetch(`${API}/pages`, { headers });
+      if (!res.ok) throw new Error("Failed to fetch pages");
+      const pages = await res.json();
+      const blob = new Blob([JSON.stringify({ pages }, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `marshall-cms-export-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Export downloaded!");
+    } catch (err) {
+      showToast(err.message, "error");
+    }
+  }
+
+  async function handleImport(file) {
+    try {
+      const text = await file.text();
+      const { pages } = JSON.parse(text);
+      if (!Array.isArray(pages)) throw new Error("Invalid export file — missing pages array");
+      const res = await fetch(`${API}/import`, {
+        method: "POST",
+        headers: jsonHeaders,
+        body: JSON.stringify({ pages: pages.map(p => ({ page: p.page, sections: p.sections })) }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Imported ${data.imported} pages successfully!`);
+      } else {
+        showToast(data.error || "Import failed", "error");
+      }
+    } catch (err) {
+      showToast(err.message, "error");
+    }
+    if (importInputRef.current) importInputRef.current.value = "";
+  }
+
+  async function handleMigrateLogos() {
+    if (!window.confirm("This will scan all pages, download every external image URL, and re-upload them to your ImageKit account. Proceed?")) return;
+    setMigrating(true);
+    setMigrateResult(null);
+    try {
+      const res = await fetch(`${API}/migrate-logos`, { method: "POST", headers: jsonHeaders });
+      const data = await res.json();
+      setMigrateResult(data);
+      if (data.success) showToast(`Migration done — ${data.succeeded}/${data.scanned} images re-hosted`);
+      else showToast(data.error || "Migration failed", "error");
+    } catch (err) {
+      showToast(err.message, "error");
+    }
+    setMigrating(false);
   }
 
   const config = PAGE_CONFIG[activePage] || { label: "Form Entries", sections: [] };
@@ -1006,6 +1065,17 @@ export default function AdminPanel() {
           </button>
         </nav>
 
+        <div className={styles.navLabel} style={{ marginTop: "1.5rem" }}>Tools</div>
+        <nav className={styles.nav}>
+          <button
+            className={`${styles.navItem} ${activePage === "migration" ? styles.active : ""}`}
+            onClick={() => setActivePage("migration")}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Migration Tools</span>
+          </button>
+        </nav>
+
         <div className={styles.sidebarFooter}>
           <div className={styles.dot} />
           <span>API Connected</span>
@@ -1020,10 +1090,12 @@ export default function AdminPanel() {
 
         <header className={styles.header}>
           <div>
-            <h1>{activePage === "leads" ? "Form Entries" : config.label}</h1>
+            <h1>{activePage === "leads" ? "Form Entries" : activePage === "migration" ? "Migration Tools" : config.label}</h1>
             <p>
               {activePage === "leads"
                 ? "View and manage incoming contact form submissions"
+                : activePage === "migration"
+                ? "Export, import, and migrate content between deployments"
                 : `Edit content for the ${config.label} page`}
             </p>
           </div>
@@ -1031,7 +1103,7 @@ export default function AdminPanel() {
             <button className={styles.publishBtn} onClick={loadLeads} disabled={loadingLeads}>
               Refresh Entries
             </button>
-          ) : (
+          ) : activePage === "migration" ? null : (
             <button className={styles.publishBtn} onClick={handleSave} disabled={saving}>
               {saving ? (
                 <><div className={styles.btnSpinner} />Saving...</>
@@ -1042,7 +1114,83 @@ export default function AdminPanel() {
           )}
         </header>
 
-        {activePage === "leads" ? (
+        {activePage === "migration" ? (
+          <div className={styles.sections} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            {/* Export */}
+            <div style={{ background: "#1e293b", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "16px", padding: "1.75rem" }}>
+              <h3 style={{ margin: "0 0 0.5rem", color: "#fff", fontSize: "1.1rem" }}>Export All Data</h3>
+              <p style={{ margin: "0 0 1.25rem", color: "rgba(255,255,255,0.55)", fontSize: "0.9rem", lineHeight: "1.5" }}>
+                Download every page's content as a single JSON file. Use this to back up your CMS or transfer data to a new deployment.
+              </p>
+              <button
+                onClick={handleExport}
+                style={{ background: "#2563eb", color: "#fff", border: "none", padding: "0.6rem 1.4rem", borderRadius: "10px", cursor: "pointer", fontWeight: "600", fontSize: "0.9rem", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download JSON Export
+              </button>
+            </div>
+
+            {/* Import */}
+            <div style={{ background: "#1e293b", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "16px", padding: "1.75rem" }}>
+              <h3 style={{ margin: "0 0 0.5rem", color: "#fff", fontSize: "1.1rem" }}>Import Data</h3>
+              <p style={{ margin: "0 0 1.25rem", color: "rgba(255,255,255,0.55)", fontSize: "0.9rem", lineHeight: "1.5" }}>
+                Upload a JSON file exported from another deployment to restore all page content. This will overwrite existing data.
+              </p>
+              <input
+                ref={importInputRef}
+                type="file"
+                accept=".json,application/json"
+                style={{ display: "none" }}
+                onChange={(e) => { if (e.target.files[0]) handleImport(e.target.files[0]); }}
+              />
+              <button
+                onClick={() => importInputRef.current?.click()}
+                style={{ background: "#059669", color: "#fff", border: "none", padding: "0.6rem 1.4rem", borderRadius: "10px", cursor: "pointer", fontWeight: "600", fontSize: "0.9rem", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload & Import JSON
+              </button>
+            </div>
+
+            {/* Migrate Logos */}
+            <div style={{ background: "#1e293b", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "16px", padding: "1.75rem" }}>
+              <h3 style={{ margin: "0 0 0.5rem", color: "#fff", fontSize: "1.1rem" }}>Migrate Logos to ImageKit</h3>
+              <p style={{ margin: "0 0 1.25rem", color: "rgba(255,255,255,0.55)", fontSize: "0.9rem", lineHeight: "1.5" }}>
+                Scan all pages for external image URLs (e.g. WordPress logos), download them, and re-upload to this deployment's ImageKit account. URLs in the database are updated automatically. Run this after importing data into a new deployment to fix broken logos.
+              </p>
+              <button
+                onClick={handleMigrateLogos}
+                disabled={migrating}
+                style={{ background: migrating ? "#475569" : "#7c3aed", color: "#fff", border: "none", padding: "0.6rem 1.4rem", borderRadius: "10px", cursor: migrating ? "not-allowed" : "pointer", fontWeight: "600", fontSize: "0.9rem", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                {migrating ? (
+                  <><div className={styles.btnSpinner} />Migrating...</>
+                ) : (
+                  <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Re-host All Images</>
+                )}
+              </button>
+              {migrateResult && (
+                <div style={{ marginTop: "1.25rem", background: "#0f172a", borderRadius: "10px", padding: "1rem", fontSize: "0.875rem", color: "rgba(255,255,255,0.8)", lineHeight: "1.6" }}>
+                  <div><strong style={{ color: "#4ade80" }}>Scanned:</strong> {migrateResult.scanned} external image URLs</div>
+                  <div><strong style={{ color: "#4ade80" }}>Re-hosted:</strong> {migrateResult.succeeded} succeeded</div>
+                  {migrateResult.failed > 0 && <div><strong style={{ color: "#f87171" }}>Failed:</strong> {migrateResult.failed} (dead links — upload manually)</div>}
+                  <div><strong style={{ color: "#4ade80" }}>Pages updated:</strong> {migrateResult.updatedPages}</div>
+                  {migrateResult.failed > 0 && (
+                    <details style={{ marginTop: "0.75rem" }}>
+                      <summary style={{ cursor: "pointer", color: "#f87171" }}>Failed URLs</summary>
+                      <ul style={{ margin: "0.5rem 0 0", paddingLeft: "1.25rem", color: "rgba(255,255,255,0.5)", fontSize: "0.8rem" }}>
+                        {Object.entries(migrateResult.mapping).filter(([,v]) => !v).map(([url]) => (
+                          <li key={url} style={{ wordBreak: "break-all" }}>{url}</li>
+                        ))}
+                      </ul>
+                    </details>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : activePage === "leads" ? (
           loadingLeads ? (
             <div className={styles.loadingState}><div className={styles.spinner} /></div>
           ) : (

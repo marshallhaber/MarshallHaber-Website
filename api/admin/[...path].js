@@ -1,8 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
+const ImageKit = require("@imagekit/nodejs");
+const { toFile } = require("@imagekit/nodejs");
 
 // ─── Cached MongoDB connection across serverless invocations ───
 let isConnected = false;
@@ -26,24 +27,22 @@ const PageContent =
   mongoose.models.PageContent ||
   mongoose.model("PageContent", PageContentSchema);
 
-// ─── Cloudinary ───
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
+// ─── ImageKit ───
+const imagekit = new ImageKit({
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
 });
 
-function uploadToCloudinary(fileBuffer, resourceType) {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { resource_type: resourceType, folder: "marshall-admin" },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result);
-      }
-    );
-    stream.end(fileBuffer);
+async function uploadToImageKit(fileBuffer, fileName, folder) {
+  const file = await toFile(fileBuffer, fileName);
+  const result = await imagekit.files.upload({
+    file,
+    fileName: fileName || "upload",
+    folder: folder,
+    useUniqueFileName: true,
   });
+  return { url: result.url };
 }
 
 // ─── Auth middleware ───
@@ -75,8 +74,12 @@ app.use(async (req, res, next) => {
 // Upload image
 app.post("/api/admin/upload-image", adminAuth, upload.single("image"), async (req, res) => {
   try {
-    const result = await uploadToCloudinary(req.file.buffer, "image");
-    res.json({ url: result.secure_url });
+    const result = await uploadToImageKit(
+      req.file.buffer,
+      req.file.originalname || "image.png",
+      "/marshall-admin/images"
+    );
+    res.json({ url: result.url });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -85,8 +88,12 @@ app.post("/api/admin/upload-image", adminAuth, upload.single("image"), async (re
 // Upload video
 app.post("/api/admin/upload-video", adminAuth, upload.single("video"), async (req, res) => {
   try {
-    const result = await uploadToCloudinary(req.file.buffer, "video");
-    res.json({ url: result.secure_url });
+    const result = await uploadToImageKit(
+      req.file.buffer,
+      req.file.originalname || "video.mp4",
+      "/marshall-admin/videos"
+    );
+    res.json({ url: result.url });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -121,6 +128,96 @@ app.put("/api/admin/pages/:page", adminAuth, async (req, res) => {
       { upsert: true, new: true, runValidators: true }
     );
     res.json(doc);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST bulk import pages
+app.post("/api/admin/import", adminAuth, async (req, res) => {
+  try {
+    const pages = req.body.pages;
+    if (!Array.isArray(pages)) return res.status(400).json({ error: "Expected { pages: [...] }" });
+    const results = [];
+    for (const { page, sections } of pages) {
+      await PageContent.findOneAndUpdate(
+        { page },
+        { page, sections },
+        { upsert: true, new: true, runValidators: true }
+      );
+      results.push(page);
+    }
+    res.json({ success: true, imported: results.length, pages: results });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+const IMAGE_EXT = /\.(png|jpg|jpeg|gif|webp|svg)(\?.*)?$/i;
+
+function collectImageUrls(obj, out = new Set()) {
+  if (!obj || typeof obj !== "object") return out;
+  if (Array.isArray(obj)) { obj.forEach(v => collectImageUrls(v, out)); return out; }
+  for (const val of Object.values(obj)) {
+    if (typeof val === "string" && IMAGE_EXT.test(val) && val.startsWith("http")) out.add(val);
+    else if (val && typeof val === "object") collectImageUrls(val, out);
+  }
+  return out;
+}
+
+function replaceImageUrls(obj, map) {
+  if (!obj || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(v => replaceImageUrls(v, map));
+  const out = {};
+  for (const [k, v] of Object.entries(obj)) {
+    out[k] = (typeof v === "string" && map[v]) ? map[v] : (v && typeof v === "object" ? replaceImageUrls(v, map) : v);
+  }
+  return out;
+}
+
+// POST migrate logos - re-download all external image URLs and re-upload to ImageKit
+app.post("/api/admin/migrate-logos", adminAuth, async (req, res) => {
+  try {
+    const pages = await PageContent.find();
+    const ikEndpoint = (process.env.IMAGEKIT_URL_ENDPOINT || "").replace(/\/$/, "");
+    const allUrls = new Set();
+    for (const p of pages) collectImageUrls(p.sections, allUrls);
+    const toMigrate = [...allUrls].filter(u => !u.startsWith(ikEndpoint));
+
+    const urlMap = {};
+    for (const url of toMigrate) {
+      try {
+        const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+        if (!resp.ok) { urlMap[url] = null; continue; }
+        const buffer = Buffer.from(await resp.arrayBuffer());
+        const fileName = url.split("/").pop().split("?")[0] || "logo.png";
+        const result = await uploadToImageKit(buffer, fileName, "/marshall-admin/logos");
+        urlMap[url] = result.url;
+      } catch {
+        urlMap[url] = null;
+      }
+    }
+
+    let updatedPages = 0;
+    for (const p of pages) {
+      const sectionsStr = JSON.stringify(p.sections);
+      const hasMatch = toMigrate.some(u => urlMap[u] && sectionsStr.includes(u));
+      if (hasMatch) {
+        const newSections = replaceImageUrls(JSON.parse(sectionsStr), urlMap);
+        await PageContent.findOneAndUpdate({ page: p.page }, { sections: newSections });
+        updatedPages++;
+      }
+    }
+
+    const succeeded = Object.values(urlMap).filter(Boolean).length;
+    res.json({
+      success: true,
+      scanned: toMigrate.length,
+      succeeded,
+      failed: toMigrate.length - succeeded,
+      updatedPages,
+      mapping: urlMap,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

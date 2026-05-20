@@ -87,6 +87,96 @@ router.put("/pages/:page", adminAuth, async (req, res) => {
   }
 });
 
+// POST bulk import pages
+router.post("/import", adminAuth, async (req, res) => {
+  try {
+    const pages = req.body.pages;
+    if (!Array.isArray(pages)) return res.status(400).json({ error: "Expected { pages: [...] }" });
+    const results = [];
+    for (const { page, sections } of pages) {
+      await PageContent.findOneAndUpdate(
+        { page },
+        { page, sections },
+        { upsert: true, new: true, runValidators: true }
+      );
+      results.push(page);
+    }
+    res.json({ success: true, imported: results.length, pages: results });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+const IMAGE_EXT = /\.(png|jpg|jpeg|gif|webp|svg)(\?.*)?$/i;
+
+function collectImageUrls(obj, out = new Set()) {
+  if (!obj || typeof obj !== "object") return out;
+  if (Array.isArray(obj)) { obj.forEach(v => collectImageUrls(v, out)); return out; }
+  for (const val of Object.values(obj)) {
+    if (typeof val === "string" && IMAGE_EXT.test(val) && val.startsWith("http")) out.add(val);
+    else if (val && typeof val === "object") collectImageUrls(val, out);
+  }
+  return out;
+}
+
+function replaceImageUrls(obj, map) {
+  if (!obj || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(v => replaceImageUrls(v, map));
+  const out = {};
+  for (const [k, v] of Object.entries(obj)) {
+    out[k] = (typeof v === "string" && map[v]) ? map[v] : (v && typeof v === "object" ? replaceImageUrls(v, map) : v);
+  }
+  return out;
+}
+
+// POST migrate logos - re-download all external image URLs and re-upload to ImageKit
+router.post("/migrate-logos", adminAuth, async (req, res) => {
+  try {
+    const pages = await PageContent.find();
+    const ikEndpoint = (process.env.IMAGEKIT_URL_ENDPOINT || "").replace(/\/$/, "");
+    const allUrls = new Set();
+    for (const p of pages) collectImageUrls(p.sections, allUrls);
+    const toMigrate = [...allUrls].filter(u => !u.startsWith(ikEndpoint));
+
+    const urlMap = {};
+    for (const url of toMigrate) {
+      try {
+        const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+        if (!resp.ok) { urlMap[url] = null; continue; }
+        const buffer = Buffer.from(await resp.arrayBuffer());
+        const fileName = url.split("/").pop().split("?")[0] || "logo.png";
+        const result = await uploadToImageKit(buffer, fileName, "/marshall-admin/logos");
+        urlMap[url] = result.url;
+      } catch {
+        urlMap[url] = null;
+      }
+    }
+
+    let updatedPages = 0;
+    for (const p of pages) {
+      const sectionsStr = JSON.stringify(p.sections);
+      const hasMatch = toMigrate.some(u => urlMap[u] && sectionsStr.includes(u));
+      if (hasMatch) {
+        const newSections = replaceImageUrls(JSON.parse(sectionsStr), urlMap);
+        await PageContent.findOneAndUpdate({ page: p.page }, { sections: newSections });
+        updatedPages++;
+      }
+    }
+
+    const succeeded = Object.values(urlMap).filter(Boolean).length;
+    res.json({
+      success: true,
+      scanned: toMigrate.length,
+      succeeded,
+      failed: toMigrate.length - succeeded,
+      updatedPages,
+      mapping: urlMap,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 const { Resend } = require("resend");
 const ContactSubmission = require("../models/ContactSubmission");
 
