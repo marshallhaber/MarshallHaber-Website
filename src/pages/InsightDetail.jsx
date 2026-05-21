@@ -1,14 +1,14 @@
-import { useLayoutEffect, useMemo } from 'react';
+import { useState, useLayoutEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import TransitionLink from '../components/ui/TransitionLink';
+import ContactModal from '../components/ui/ContactModal';
+import styles from './WorkDetail.module.css';
+import mhcgLogo from '../assets/logo/logo.png';
 import { usePageContent } from '../hooks/usePageContent';
 import { getContent } from '../lib/content';
 import { defaults } from '../lib/contentDefaults';
 
-/**
- * Parse a simple markdown-like body string into renderable blocks.
- * Supports: ## headings, - bullet lists, blank-line paragraph separation.
- */
 function parseBody(body) {
   if (!body) return [];
   const lines = body.split('\n');
@@ -32,7 +32,6 @@ function parseBody(body) {
 
   for (const line of lines) {
     const trimmed = line.trim();
-
     if (trimmed.startsWith('## ')) {
       flushParagraph();
       flushBullets();
@@ -55,56 +54,48 @@ function parseBody(body) {
 
 export default function InsightDetail() {
   const { slug } = useParams();
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
-  // Fetch CMS articles
   const { sections: insightSections, loading: loadingInsights } = usePageContent("insights");
-  // Also fetch home page card data (in case slugs differ)
   const { sections: homeSections, loading: loadingHome } = usePageContent("home");
 
   const loading = loadingInsights || loadingHome;
 
-  // Get CMS articles; always merge with local defaults so articles always exist
+  const ctaInquiry = getContent(homeSections, "cta.left", defaults.home.cta.left);
+  const ctaReview = getContent(homeSections, "cta.right", defaults.home.cta.right);
+
   const cmsArticles = getContent(insightSections, "articles", null);
   const defaultArticles = defaults.insights.articles;
 
-  let articles;
-  if (cmsArticles && Array.isArray(cmsArticles) && cmsArticles.length > 0) {
-    articles = cmsArticles;
-  } else {
-    articles = defaultArticles;
-  }
+  const articles = useMemo(() => {
+    if (cmsArticles && Array.isArray(cmsArticles) && cmsArticles.length > 0) return cmsArticles;
+    return defaultArticles;
+  }, [cmsArticles, defaultArticles]);
 
-  // Find article by slug
-  let article = articles.find(a => a.slug === slug);
-
-  // If not found in articles, check defaults
-  if (!article) {
-    article = defaultArticles.find(a => a.slug === slug);
-  }
-
-  // Last resort: build from home page insight cards
-  if (!article) {
-    const homeCards = getContent(homeSections, "insights.cards", defaults.home.insights.cards);
-    const matchedCard = homeCards.find(c => c.slug === slug);
-    if (matchedCard) {
-      article = {
-        title: matchedCard.desc || matchedCard.title?.replace(/\\n/g, ' ') || slug,
-        slug,
-        heroImage: "",
-        body: "",
-        images: [],
-      };
+  const article = useMemo(() => {
+    let found = articles.find(a => a.slug === slug);
+    if (!found) found = defaultArticles.find(a => a.slug === slug);
+    if (!found) {
+      const homeCards = getContent(homeSections, "insights.cards", defaults.home.insights.cards);
+      const matchedCard = homeCards?.find(c => c.slug === slug);
+      if (matchedCard) {
+        found = {
+          title: matchedCard.desc || matchedCard.title?.replace(/\\n/g, ' ') || slug,
+          slug,
+          heroImage: '',
+          body: '',
+          images: [],
+        };
+      }
     }
-  }
+    return found;
+  }, [articles, slug, homeSections, defaultArticles]);
 
-  // Collect images from article (support both images array and image1-image5 fields)
   const images = useMemo(() => {
     if (!article) return [];
-    // If images array exists and has items, use that
     if (article.images && Array.isArray(article.images) && article.images.length > 0) {
       return article.images.filter(Boolean);
     }
-    // Otherwise collect image1..image5
     const imgs = [];
     for (let i = 1; i <= 5; i++) {
       const url = article[`image${i}`];
@@ -113,8 +104,12 @@ export default function InsightDetail() {
     return imgs;
   }, [article]);
 
-  // Parse body into blocks
   const bodyBlocks = useMemo(() => parseBody(article?.body || ''), [article]);
+
+  const moreArticles = useMemo(
+    () => articles.filter(a => a.slug !== slug).slice(0, 3),
+    [articles, slug]
+  );
 
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
@@ -127,7 +122,11 @@ export default function InsightDetail() {
   }, []);
 
   if (loading) {
-    return <div className="min-h-screen pt-32 px-6 flex items-center justify-center" style={{ backgroundColor: "#fbf0f2" }}>Loading...</div>;
+    return (
+      <div className="min-h-screen pt-32 px-6 flex items-center justify-center" style={{ backgroundColor: "#fbf0f2" }}>
+        Loading...
+      </div>
+    );
   }
 
   if (!article) {
@@ -139,99 +138,211 @@ export default function InsightDetail() {
     );
   }
 
-  // Interleave images between heading sections
-  // Strategy: place images after each heading section (group of heading + content)
-  let imageIndex = 0;
-  const renderBlocks = [];
-  let sectionCount = 0;
-
-  for (let i = 0; i < bodyBlocks.length; i++) {
-    const block = bodyBlocks[i];
-
-    // Before each heading (except the first), check if we should insert an image
-    if (block.type === 'heading' && sectionCount > 0 && imageIndex < images.length) {
-      renderBlocks.push({ type: 'image', url: images[imageIndex] });
-      imageIndex++;
-    }
-
-    if (block.type === 'heading') sectionCount++;
-    renderBlocks.push(block);
-  }
-
-  // Add remaining images at the end
-  while (imageIndex < images.length) {
-    renderBlocks.push({ type: 'image', url: images[imageIndex] });
-    imageIndex++;
-  }
+  const galleryImages = images.filter(url => url !== article.heroImage);
 
   return (
     <motion.div
+      className={styles.page}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen pt-32 px-6 md:px-12 pb-24 max-w-4xl mx-auto"
     >
-      <Link to="/" className="text-sm font-bold mb-8 inline-block hover:opacity-70 tracking-widest uppercase">← Back</Link>
-      
-      <h1
-        className="text-4xl md:text-6xl font-bold mb-12"
-        style={{ fontFamily: "'PP Mori', sans-serif", letterSpacing: "-0.03em", lineHeight: 1.1 }}
-      >
-        {article.title}
-      </h1>
+      {/* MHCG Logo */}
+      <div style={{ textAlign: 'center', paddingBottom: '1rem' }}>
+        <img src={mhcgLogo} alt="MHCG" style={{ height: '36px', display: 'inline-block' }} />
+      </div>
 
-      {article.heroImage && (
-        <img src={article.heroImage} alt="" className="w-full h-auto mb-16 rounded-[24px]" />
+      <div className={styles.container}>
+        {/* Back Button */}
+        <TransitionLink to="/" className={styles.backLink}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+          Back
+        </TransitionLink>
+
+        {/* Header */}
+        <section className={styles.heroHeader}>
+          {article.category && (
+            <motion.p
+              className={styles.eyebrow}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+            >
+              {article.category}
+            </motion.p>
+          )}
+          <motion.h1
+            className={styles.projectTitle}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+          >
+            {article.title}
+          </motion.h1>
+          {article.subtitle && (
+            <motion.p
+              className={styles.tagline}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.15 }}
+            >
+              {article.subtitle}
+            </motion.p>
+          )}
+        </section>
+
+        {/* Body Text */}
+        {bodyBlocks.length > 0 && (
+          <motion.section
+            className={styles.descriptionSection}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+          >
+            {bodyBlocks.map((block, idx) => {
+              switch (block.type) {
+                case 'heading':
+                  return (
+                    <h2
+                      key={idx}
+                      style={{
+                        fontFamily: "'PP Mori', sans-serif",
+                        fontSize: 'clamp(1.3rem, 2.5vw, 2rem)',
+                        fontWeight: 600,
+                        letterSpacing: '-0.02em',
+                        lineHeight: 1.2,
+                        margin: '2.5rem 0 1rem',
+                        color: '#020817',
+                      }}
+                    >
+                      {block.text}
+                    </h2>
+                  );
+                case 'paragraph':
+                  return (
+                    <p key={idx} className={styles.description} style={{ marginBottom: '1.5rem' }}>
+                      {block.text}
+                    </p>
+                  );
+                case 'list':
+                  return (
+                    <ul
+                      key={idx}
+                      style={{
+                        paddingLeft: '1.5rem',
+                        marginBottom: '1.5rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      {block.items.map((item, j) => (
+                        <li key={j} className={styles.description} style={{ marginBottom: 0 }}>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  );
+                default:
+                  return null;
+              }
+            })}
+          </motion.section>
+        )}
+
+        {/* Hero Image */}
+        {article.heroImage && (
+          <motion.section
+            className={styles.mainImageWrapper}
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <img src={article.heroImage} alt={article.title} className={styles.mainImage} />
+          </motion.section>
+        )}
+
+        {/* Gallery Images */}
+        {galleryImages.length > 0 && (
+          <div className={styles.galleryVerticalStack}>
+            {galleryImages.map((url, idx) => (
+              <motion.section
+                key={idx}
+                className={styles.mainImageWrapper}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.8 }}
+              >
+                <img src={url} alt={`${article.title} ${idx + 1}`} className={styles.mainImage} />
+              </motion.section>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* More Articles */}
+      {moreArticles.length > 0 && (
+        <section className={styles.moreProjects}>
+          <div className={styles.container} style={{ padding: 0 }}>
+            <h2 className={styles.moreProjectsHeader}>More Insights</h2>
+            <div className={styles.moreProjectsGrid}>
+              {moreArticles.map((a, i) => (
+                <TransitionLink to={`/insights/${a.slug}`} key={a.slug} className={styles.projectCard}>
+                  <motion.div
+                    className={styles.projectImageWrapper}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    style={{ backgroundColor: '#e8e6df' }}
+                  >
+                    {a.heroImage ? (
+                      <img src={a.heroImage} alt={a.title} className={styles.projectImage} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', backgroundColor: '#e8e6df' }} />
+                    )}
+                  </motion.div>
+                  <div>
+                    <h3 className={styles.projectCardTitle}>{a.title}</h3>
+                    {a.category && (
+                      <p className={styles.projectCardCategory}>{a.category}</p>
+                    )}
+                  </div>
+                </TransitionLink>
+              ))}
+            </div>
+          </div>
+        </section>
       )}
 
-      {renderBlocks.map((block, idx) => {
-        switch (block.type) {
-          case 'heading':
-            return (
-              <h2
-                key={idx}
-                className="text-3xl md:text-[40px] font-extrabold mb-6 mt-16"
-                style={{ fontFamily: "'PP Mori', sans-serif", letterSpacing: "-0.02em" }}
-              >
-                {block.text}
-              </h2>
-            );
-          case 'paragraph':
-            const isFirstParagraph = !renderBlocks.slice(0, idx).some(b => b.type === 'paragraph');
-            return (
-              <p
-                key={idx}
-                className={isFirstParagraph ? "text-xl md:text-2xl font-medium mb-8 text-[#71717a]" : "text-lg md:text-[20px] leading-[1.7] mb-6"}
-                style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
-              >
-                {block.text}
-              </p>
-            );
-          case 'list':
-            return (
-              <ul key={idx} className="list-disc pl-8 mb-8 space-y-2">
-                {block.items.map((item, j) => (
-                  <li
-                    key={j}
-                    className="text-lg md:text-[20px] leading-[1.7]"
-                    style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            );
-          case 'image':
-            return (
-              <div key={idx} className="my-12">
-                <img src={block.url} alt="" className="w-full h-auto rounded-[24px]" />
-              </div>
-            );
-          default:
-            return null;
-        }
-      })}
+      {/* CTA Section */}
+      <section className={styles.ctaSection}>
+        <button
+          onClick={() => setIsContactModalOpen(true)}
+          className={styles.ctaBlockDark}
+          style={{ border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}
+        >
+          <div className={styles.ctaTextTop}>
+            <strong>{ctaInquiry.topBold}</strong>
+            <span>{ctaInquiry.topItalic}</span>
+          </div>
+          <h2 className={styles.ctaHeading}>{ctaInquiry.heading}</h2>
+        </button>
+
+        <TransitionLink to="/services" className={styles.ctaBlockPink}>
+          <div className={styles.ctaTextTop}>
+            <strong>{ctaReview.topBold}</strong>
+            <span>{ctaReview.topItalic}</span>
+          </div>
+          <h2 className={styles.ctaHeading}>{ctaReview.heading}</h2>
+        </TransitionLink>
+      </section>
+
+      <ContactModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />
     </motion.div>
   );
 }

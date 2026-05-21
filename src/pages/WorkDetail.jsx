@@ -8,6 +8,46 @@ import styles from './WorkDetail.module.css';
 import { usePageContent } from '../hooks/usePageContent';
 import { getContent } from '../lib/content';
 import { defaults } from '../lib/contentDefaults';
+import mhcgLogo from '../assets/logo/logo.png';
+
+function parseBody(body) {
+  if (!body) return [];
+  const lines = body.split('\n');
+  const blocks = [];
+  let currentParagraph = [];
+
+  const flushParagraph = () => {
+    if (currentParagraph.length > 0) {
+      blocks.push({ type: 'paragraph', text: currentParagraph.join('\n') });
+      currentParagraph = [];
+    }
+  };
+  let bulletBuffer = [];
+  const flushBullets = () => {
+    if (bulletBuffer.length > 0) {
+      blocks.push({ type: 'list', items: [...bulletBuffer] });
+      bulletBuffer = [];
+    }
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('## ')) {
+      flushParagraph(); flushBullets();
+      blocks.push({ type: 'heading', text: trimmed.slice(3) });
+    } else if (trimmed.startsWith('- ')) {
+      flushParagraph();
+      bulletBuffer.push(trimmed.slice(2));
+    } else if (trimmed === '') {
+      flushBullets(); flushParagraph();
+    } else {
+      flushBullets();
+      currentParagraph.push(trimmed);
+    }
+  }
+  flushBullets(); flushParagraph();
+  return blocks;
+}
 
 export default function WorkDetail() {
   const { slug } = useParams();
@@ -16,7 +56,6 @@ export default function WorkDetail() {
 
   const { sections } = usePageContent("workDetail");
   const { sections: workSections, loading: workLoading } = usePageContent("work");
-  const info = getContent(sections, "info", defaults.workDetail.info);
   const moreProjectsHeading = getContent(sections, "moreProjectsHeading", defaults.workDetail.moreProjectsHeading);
   const { sections: homeSections } = usePageContent("home");
   const ctaInquiry = getContent(homeSections, "cta.left", defaults.home.cta.left);
@@ -32,6 +71,7 @@ export default function WorkDetail() {
         category: p.category || 'Uncategorized',
         client: p.client || p.title,
         services: p.services || '',
+        body: p.body || '',
         description: p.description || '',
         image: p.imageUrl || '',
         video: p.videoUrl || '',
@@ -73,6 +113,11 @@ export default function WorkDetail() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
+      {/* MHCG Logo */}
+      <div style={{ textAlign: 'center', paddingBottom: '1rem' }}>
+        <img src={mhcgLogo} alt="MHCG" style={{ height: '36px', display: 'inline-block' }} />
+      </div>
+
       <div className={styles.container}>
         {/* Back Button */}
         <TransitionLink to="/work" className={styles.backLink}>
@@ -84,14 +129,16 @@ export default function WorkDetail() {
 
         {/* Header */}
         <section className={styles.heroHeader}>
-          <motion.p
-            className={styles.eyebrow}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            {project.category}
-          </motion.p>
+          {project.category && (
+            <motion.p
+              className={styles.eyebrow}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+            >
+              {project.category}
+            </motion.p>
+          )}
           <motion.h1
             className={styles.projectTitle}
             initial={{ opacity: 0, y: 20 }}
@@ -100,7 +147,7 @@ export default function WorkDetail() {
           >
             {project.title}
           </motion.h1>
-          {project.subtitle && project.subtitle.toLowerCase() !== project.category.toLowerCase() && (
+          {project.subtitle && project.subtitle.toLowerCase() !== (project.category || '').toLowerCase() && (
             <motion.p
               className={styles.tagline}
               initial={{ opacity: 0, y: 20 }}
@@ -112,67 +159,65 @@ export default function WorkDetail() {
           )}
         </section>
 
-        {/* Info Grid */}
-        <section className={styles.infoGrid}>
-          <motion.div
-            className={styles.infoColumn}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-          >
-            <div className={styles.infoDivider} />
-            <h3 className={styles.infoLabel}>{info.clientLabel}</h3>
-            <p className={styles.infoValue}>{project.client}</p>
-          </motion.div>
-
-          <motion.div
-            className={styles.infoColumn}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.25 }}
-          >
-            <div className={styles.infoDivider} />
-            <h3 className={styles.infoLabel}>{info.industryLabel}</h3>
-            <p className={styles.infoValue}>{project.category}</p>
-          </motion.div>
-
-          <motion.div
-            className={styles.infoColumn}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-          >
-            <div className={styles.infoDivider} />
-            <h3 className={styles.infoLabel}>{info.servicesLabel}</h3>
-            <p className={styles.infoValue}>{project.services || info.servicesValue}</p>
-          </motion.div>
-        </section>
-
-        {project.description && (
+        {/* Rich Body Text (new) — falls back to description if body not set */}
+        {(project.body || project.description) && (
           <motion.section
             className={styles.descriptionSection}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.35 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <p className={styles.description}>{project.description}</p>
+            {project.body ? (
+              parseBody(project.body).map((block, idx) => {
+                switch (block.type) {
+                  case 'heading':
+                    return (
+                      <h2 key={idx} style={{
+                        fontFamily: "'PP Mori', sans-serif",
+                        fontSize: 'clamp(1.2rem, 2.2vw, 1.8rem)',
+                        fontWeight: 600,
+                        letterSpacing: '-0.02em',
+                        lineHeight: 1.2,
+                        margin: '2.5rem 0 0.75rem',
+                        color: '#020817',
+                      }}>{block.text}</h2>
+                    );
+                  case 'paragraph':
+                    return <p key={idx} className={styles.description} style={{ marginBottom: '1.25rem' }}>{block.text}</p>;
+                  case 'list':
+                    return (
+                      <ul key={idx} style={{ paddingLeft: '1.5rem', marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                        {block.items.map((item, j) => (
+                          <li key={j} className={styles.description} style={{ marginBottom: 0 }}>{item}</li>
+                        ))}
+                      </ul>
+                    );
+                  default: return null;
+                }
+              })
+            ) : (
+              <p className={styles.description}>{project.description}</p>
+            )}
           </motion.section>
         )}
 
         {/* Main Image or Video */}
-        <motion.section
-          className={styles.mainImageWrapper}
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          {project.video ? (
-            <video src={project.video} autoPlay muted loop playsInline className={styles.mainImage} />
-          ) : (
-            <img src={project.image} alt={project.title} className={styles.mainImage} />
-          )}
-        </motion.section>
+        {(project.image || project.video) && (
+          <motion.section
+            className={styles.mainImageWrapper}
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            {project.video ? (
+              <video src={project.video} autoPlay muted loop playsInline className={styles.mainImage} />
+            ) : (
+              <img src={project.image} alt={project.title} className={styles.mainImage} />
+            )}
+          </motion.section>
+        )}
 
+        {/* Secondary description (legacy) */}
         {project.description2 && (
           <motion.section
             className={styles.descriptionSection}
@@ -209,7 +254,7 @@ export default function WorkDetail() {
           </motion.section>
         )}
 
-        {/* Gallery Images Stacked Vertically One by One */}
+        {/* Gallery — multiple images stacked */}
         {project.gallery && project.gallery.length > 0 && (
           <div className={styles.galleryVerticalStack}>
             {project.gallery

@@ -117,15 +117,30 @@ export default function Clients() {
                             <FadeIn key={client.name} delay={i * 0.04}>
                                 <div className={styles.logoCell}>
                                     <div className={styles.logoContent}>
-                                        <img 
-                                            src={getLogoUrl(client.logo)} 
-                                            alt={client.name} 
-                                            className={styles.clientLogoImg}
-                                            style={{
-                                                transform: `scale(${scaleFactor})`,
-                                                transformOrigin: "center center",
-                                            }}
-                                        />
+                                        {client.logo ? (
+                                            <img
+                                                src={getLogoUrl(client.logo)}
+                                                alt={client.name}
+                                                className={styles.clientLogoImg}
+                                                style={{
+                                                    transform: `scale(${scaleFactor})`,
+                                                    transformOrigin: "center center",
+                                                }}
+                                            />
+                                        ) : (
+                                            <span style={{
+                                                fontSize: '0.75rem',
+                                                fontWeight: 600,
+                                                letterSpacing: '0.08em',
+                                                textTransform: 'uppercase',
+                                                color: '#020817',
+                                                opacity: 0.6,
+                                                textAlign: 'center',
+                                                lineHeight: 1.3,
+                                            }}>
+                                                {client.name}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             </FadeIn>
