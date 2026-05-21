@@ -266,8 +266,8 @@ app.post("/api/admin/contact", async (req, res) => {
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
             <tr><td style="padding: 8px 0; font-weight: bold; width: 120px;">Name:</td><td style="padding: 8px 0;">${name}</td></tr>
             <tr><td style="padding: 8px 0; font-weight: bold;">Email:</td><td style="padding: 8px 0;"><a href="mailto:${email}" style="color: #2B59C3; text-decoration: none;">${email}</a></td></tr>
-            <tr><td style="padding: 8px 0; font-weight: bold;">Phone:</td><td style="padding: 8px 0;">${phone || "Not provided"}</td></tr>
-            <tr><td style="padding: 8px 0; font-weight: bold;">Services:</td><td style="padding: 8px 0;">${services && services.length > 0 ? services.map(s => `<span style="display:inline-block;background:#020817;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;margin-right:4px;">${s}</span>`).join("") : "None selected"}</td></tr>
+            ${phone ? `<tr><td style="padding: 8px 0; font-weight: bold;">Phone:</td><td style="padding: 8px 0;">${phone}</td></tr>` : ''}
+<tr><td style="padding: 8px 0; font-weight: bold;">Services:</td><td style="padding: 8px 0;">${services && services.length > 0 ? services.map(s => `<span style="display:inline-block;background:#020817;color:#fff;padding:2px 8px;border-radius:12px;font-size:11px;margin-right:4px;">${s}</span>`).join("") : "None selected"}</td></tr>
           </table>
           <div style="background-color: #fff; padding: 15px; border-radius: 6px; border: 1px solid #eaeaea; margin-top: 15px;">
             <h4 style="margin-top: 0; color: #020817; margin-bottom: 8px;">Message:</h4>
