@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import TransitionLink from '../components/ui/TransitionLink';
 import ContactModal from '../components/ui/ContactModal';
 import styles from './WorkDetail.module.css';
-import mhcgLogo from '../assets/logo/logo.png';
 import { usePageContent } from '../hooks/usePageContent';
 import { getContent } from '../lib/content';
 import { defaults } from '../lib/contentDefaults';
@@ -162,11 +161,6 @@ export default function InsightDetail() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* MHCG Logo */}
-      <div style={{ textAlign: 'center', paddingBottom: '1rem' }}>
-        <img src={mhcgLogo} alt="MHCG" style={{ height: '36px', display: 'inline-block' }} />
-      </div>
-
       <div className={styles.container}>
         {/* Back Button */}
         <TransitionLink to="/" className={styles.backLink}>

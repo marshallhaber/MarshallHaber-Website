@@ -8,7 +8,6 @@ import styles from './WorkDetail.module.css';
 import { usePageContent } from '../hooks/usePageContent';
 import { getContent } from '../lib/content';
 import { defaults } from '../lib/contentDefaults';
-import mhcgLogo from '../assets/logo/logo.png';
 
 // Render inline markdown: **bold**, *italic*, __bold__, _italic_
 function renderInline(text) {
@@ -128,11 +127,6 @@ export default function WorkDetail() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* MHCG Logo */}
-      <div style={{ textAlign: 'center', paddingBottom: '1rem' }}>
-        <img src={mhcgLogo} alt="MHCG" style={{ height: '36px', display: 'inline-block' }} />
-      </div>
-
       <div className={styles.container}>
         {/* Back Button */}
         <TransitionLink to="/work" className={styles.backLink}>
