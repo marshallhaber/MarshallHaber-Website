@@ -44,10 +44,10 @@ export default function Works() {
     <div ref={containerRef} className="w-full px-6 pt-12 pb-10 bg-[#fbf0f2] text-[#020817]">
       <Reveal>
         <h2
-          className="text-[clamp(1.8rem,4.5vw,3.2rem)] md:text-[3.5vw] lg:text-[2.8vw] leading-[1.1] mb-16 text-inherit text-center max-w-[1000px] mx-auto"
+          className="text-[clamp(1.6rem,4.2vw,4.2rem)] leading-[1.1] mb-16 text-inherit text-center whitespace-nowrap mx-auto"
         >
           <span style={{ fontFamily: "'Nib Pro', serif", fontWeight: 700, fontStyle: "italic" }}>
-            {headingItalic || "Creating vision and transformation."}
+            {headingItalic || "Strategy. Design. Transformation."}
           </span>
         </h2>
       </Reveal>
