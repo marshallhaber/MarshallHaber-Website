@@ -8,6 +8,9 @@
     "preview": "vite preview",
     "lint": "eslint"
   },
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
     "@fontsource/playfair-display": "^5.2.8",
     "@imagekit/nodejs": "^7.5.0",
