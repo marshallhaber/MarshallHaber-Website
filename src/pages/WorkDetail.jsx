@@ -10,6 +10,21 @@ import { getContent } from '../lib/content';
 import { defaults } from '../lib/contentDefaults';
 import mhcgLogo from '../assets/logo/logo.png';
 
+// Render inline markdown: **bold**, *italic*, __bold__, _italic_
+function renderInline(text) {
+  const parts = [];
+  const re = /(\*\*|__)(.*?)\1|(\*|_)(.*?)\3/g;
+  let last = 0, match, key = 0;
+  while ((match = re.exec(text)) !== null) {
+    if (match.index > last) parts.push(text.slice(last, match.index));
+    if (match[1]) parts.push(<strong key={key++}>{match[2]}</strong>);
+    else parts.push(<em key={key++}>{match[4]}</em>);
+    last = match.index + match[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts;
+}
+
 function parseBody(body) {
   if (!body) return [];
   const lines = body.split('\n');
@@ -180,15 +195,15 @@ export default function WorkDetail() {
                         lineHeight: 1.2,
                         margin: '2.5rem 0 0.75rem',
                         color: '#020817',
-                      }}>{block.text}</h2>
+                      }}>{renderInline(block.text)}</h2>
                     );
                   case 'paragraph':
-                    return <p key={idx} className={styles.description} style={{ marginBottom: '1.25rem' }}>{block.text}</p>;
+                    return <p key={idx} className={styles.description} style={{ marginBottom: '1.25rem' }}>{renderInline(block.text)}</p>;
                   case 'list':
                     return (
                       <ul key={idx} style={{ paddingLeft: '1.5rem', marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                         {block.items.map((item, j) => (
-                          <li key={j} className={styles.description} style={{ marginBottom: 0 }}>{item}</li>
+                          <li key={j} className={styles.description} style={{ marginBottom: 0 }}>{renderInline(item)}</li>
                         ))}
                       </ul>
                     );

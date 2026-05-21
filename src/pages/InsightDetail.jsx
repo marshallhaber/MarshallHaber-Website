@@ -9,6 +9,20 @@ import { usePageContent } from '../hooks/usePageContent';
 import { getContent } from '../lib/content';
 import { defaults } from '../lib/contentDefaults';
 
+function renderInline(text) {
+  const parts = [];
+  const re = /(\*\*|__)(.*?)\1|(\*|_)(.*?)\3/g;
+  let last = 0, match, key = 0;
+  while ((match = re.exec(text)) !== null) {
+    if (match.index > last) parts.push(text.slice(last, match.index));
+    if (match[1]) parts.push(<strong key={key++}>{match[2]}</strong>);
+    else parts.push(<em key={key++}>{match[4]}</em>);
+    last = match.index + match[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts;
+}
+
 function parseBody(body) {
   if (!body) return [];
   const lines = body.split('\n');
@@ -218,13 +232,13 @@ export default function InsightDetail() {
                         color: '#020817',
                       }}
                     >
-                      {block.text}
+                      {renderInline(block.text)}
                     </h2>
                   );
                 case 'paragraph':
                   return (
                     <p key={idx} className={styles.description} style={{ marginBottom: '1.5rem' }}>
-                      {block.text}
+                      {renderInline(block.text)}
                     </p>
                   );
                 case 'list':
@@ -241,7 +255,7 @@ export default function InsightDetail() {
                     >
                       {block.items.map((item, j) => (
                         <li key={j} className={styles.description} style={{ marginBottom: 0 }}>
-                          {item}
+                          {renderInline(item)}
                         </li>
                       ))}
                     </ul>
