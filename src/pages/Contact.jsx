@@ -34,7 +34,9 @@ function AnimatedSection({ children, className, delay = 0 }) {
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [focused, setFocused] = useState(null);
+  const formRef = useRef(null);
 
   const { sections } = usePageContent("contact");
   const hero = getContent(sections, "hero", defaults.contact.hero);
@@ -48,8 +50,28 @@ export default function Contact() {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    const data = new FormData(e.target);
+    const payload = {
+      name: data.get('name') || '',
+      email: data.get('email') || '',
+      phone: data.get('company') || '',
+      message: data.get('message') || '',
+      services: [],
+    };
+    try {
+      const res = await fetch('/api/admin/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('Server error');
+    } catch (err) {
+      console.error('Contact form error:', err);
+    }
+    setLoading(false);
     setSubmitted(true);
   };
 
@@ -181,6 +203,7 @@ export default function Contact() {
                       className={styles.input}
                       required
                       id="contact-name"
+                      name="name"
                       onFocus={() => setFocused('name')}
                       onBlur={() => setFocused(null)}
                     />
@@ -193,6 +216,7 @@ export default function Contact() {
                       className={styles.input}
                       required
                       id="contact-email"
+                      name="email"
                       onFocus={() => setFocused('email')}
                       onBlur={() => setFocused(null)}
                     />
@@ -206,6 +230,7 @@ export default function Contact() {
                     placeholder={form.companyPlaceholder}
                     className={styles.input}
                     id="contact-company"
+                    name="company"
                     onFocus={() => setFocused('company')}
                     onBlur={() => setFocused(null)}
                   />
@@ -219,6 +244,7 @@ export default function Contact() {
                     rows="5"
                     required
                     id="contact-message"
+                    name="message"
                     onFocus={() => setFocused('message')}
                     onBlur={() => setFocused(null)}
                   />
@@ -235,12 +261,24 @@ export default function Contact() {
                   </label>
                 </div>
 
-                <button type="submit" className={styles.submitBtn} id="contact-submit">
-                  <span>{form.submitText}</span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/>
-                    <polyline points="12 5 19 12 12 19"/>
-                  </svg>
+                <button type="submit" className={styles.submitBtn} id="contact-submit" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <span>Sending…</span>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'spin 1s linear infinite' }}>
+                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" strokeLinecap="round"/>
+                      </svg>
+                      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+                    </>
+                  ) : (
+                    <>
+                      <span>{form.submitText}</span>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                      </svg>
+                    </>
+                  )}
                 </button>
               </form>
             )}

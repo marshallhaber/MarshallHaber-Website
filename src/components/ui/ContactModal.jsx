@@ -82,6 +82,7 @@ export default function ContactModal({ isOpen, onClose }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setStage('loading');
         const payload = {
             services: Array.from(services),
             name,
@@ -90,13 +91,12 @@ export default function ContactModal({ isOpen, onClose }) {
             message,
         };
         try {
-            await fetch('/api/admin/contact', {
+            const res = await fetch('/api/admin/contact', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
+            if (!res.ok) throw new Error('Server error');
         } catch (err) {
             console.error('Error submitting form:', err);
         }
@@ -132,7 +132,17 @@ export default function ContactModal({ isOpen, onClose }) {
                             exit={{ opacity: 0, scale: 0.98, y: 8 }}
                             transition={{ type: 'spring', damping: 28, stiffness: 260 }}
                         >
-                            {stage === 'submitted' ? (
+                            {stage === 'loading' ? (
+                                <div className={styles.successBody}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '2rem 0' }}>
+                                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'spin 1s linear infinite' }}>
+                                            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" strokeLinecap="round"/>
+                                        </svg>
+                                        <p style={{ fontSize: '1rem', opacity: 0.6 }}>Sending…</p>
+                                    </div>
+                                    <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+                                </div>
+                            ) : stage === 'submitted' ? (
                                 <div className={styles.successBody}>
                                     <h2 className={styles.successHeading}>Thanks — we'll be in touch.</h2>
                                     <p className={styles.successText}>
