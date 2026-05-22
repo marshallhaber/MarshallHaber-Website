@@ -401,6 +401,7 @@ const PAGE_CONFIG = {
         type: "list",
         fields: [
           { name: "title", label: "Title", type: "text" },
+          { name: "subtitle", label: "Subtitle (italic line under title)", type: "text" },
           { name: "slug", label: "URL Slug", type: "text" },
           { name: "tag", label: "Card Tag (e.g. SERIOUS.BUSINESS)", type: "text" },
           { name: "desc", label: "Card Description/Subtitle", type: "textarea" },
