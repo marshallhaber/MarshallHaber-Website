@@ -163,7 +163,7 @@ export default function InsightDetail() {
     >
       <div className={styles.container}>
         {/* Back Button */}
-        <TransitionLink to="/" className={styles.backLink}>
+        <TransitionLink to="/insights" className={styles.backLink}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="15 18 9 12 15 6" />
           </svg>
@@ -218,11 +218,11 @@ export default function InsightDetail() {
                       key={idx}
                       style={{
                         fontFamily: "'PP Mori', sans-serif",
-                        fontSize: 'clamp(1.3rem, 2.5vw, 2rem)',
+                        fontSize: 'clamp(1.2rem, 2.2vw, 1.8rem)',
                         fontWeight: 600,
                         letterSpacing: '-0.02em',
                         lineHeight: 1.2,
-                        margin: '2.5rem 0 1rem',
+                        margin: '2.5rem 0 0.75rem',
                         color: '#020817',
                       }}
                     >
@@ -261,15 +261,19 @@ export default function InsightDetail() {
           </motion.section>
         )}
 
-        {/* Hero Image */}
-        {article.heroImage && (
+        {/* Hero Image or Video */}
+        {(article.heroImage || article.heroVideo) && (
           <motion.section
             className={styles.mainImageWrapper}
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <img src={article.heroImage} alt={article.title} className={styles.mainImage} />
+            {article.heroVideo ? (
+              <video src={article.heroVideo} autoPlay muted loop playsInline className={styles.mainImage} />
+            ) : (
+              <img src={article.heroImage} alt={article.title} className={styles.mainImage} />
+            )}
           </motion.section>
         )}
 
