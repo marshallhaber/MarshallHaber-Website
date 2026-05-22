@@ -119,11 +119,6 @@ export default function InsightDetail() {
 
   const bodyBlocks = useMemo(() => parseBody(article?.body || ''), [article]);
 
-  const moreArticles = useMemo(
-    () => articles.filter(a => a.slug !== slug).slice(0, 3),
-    [articles, slug]
-  );
-
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
     document.body.style.backgroundColor = "#fbf0f2";
@@ -295,41 +290,6 @@ export default function InsightDetail() {
           </div>
         )}
       </div>
-
-      {/* More Articles */}
-      {moreArticles.length > 0 && (
-        <section className={styles.moreProjects}>
-          <div className={styles.container} style={{ padding: 0 }}>
-            <h2 className={styles.moreProjectsHeader}>More Insights</h2>
-            <div className={styles.moreProjectsGrid}>
-              {moreArticles.map((a, i) => (
-                <TransitionLink to={`/insights/${a.slug}`} key={a.slug} className={styles.projectCard}>
-                  <motion.div
-                    className={styles.projectImageWrapper}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: i * 0.1 }}
-                    style={{ backgroundColor: '#e8e6df' }}
-                  >
-                    {a.heroImage ? (
-                      <img src={a.heroImage} alt={a.title} className={styles.projectImage} />
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', backgroundColor: '#e8e6df' }} />
-                    )}
-                  </motion.div>
-                  <div>
-                    <h3 className={styles.projectCardTitle}>{a.title}</h3>
-                    {a.category && (
-                      <p className={styles.projectCardCategory}>{a.category}</p>
-                    )}
-                  </div>
-                </TransitionLink>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* CTA Section */}
       <section className={styles.ctaSection}>
