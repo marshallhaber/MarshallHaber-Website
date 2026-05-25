@@ -1,4 +1,4 @@
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useEffect } from "react";
 import Hero, { HeroTopText } from "../components/sections/Hero";
 import AboutSection from "../components/sections/About";
 import ServiceBlock, { StrategyVideo, VisualImage, WebsiteImage, ProductImage } from "../components/sections/Services";
@@ -24,6 +24,16 @@ const PANEL_VISUALS = [
 
 export default function Home() {
   const { sections } = usePageContent("home");
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.async = true;
+    script.innerHTML = `(function(ss,ex){ window.ldfdr=window.ldfdr||function(){(ldfdr._q=ldfdr._q||[]).push([].slice.call(arguments));}; (function(d,s){ fs=d.getElementsByTagName(s)[0]; function ce(src){ var cs=d.createElement(s); cs.src=src; cs.async=1; fs.parentNode.insertBefore(cs,fs); }; ce('https://sc.lfeeder.com/lftracker_v1_'+ss+(ex?'_'+ex:'')+'.js'); })(document,'script'); })('bElvO73XO964ZMqj');`;
+    document.head.appendChild(script);
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
   const servicesLabel = getContent(sections, "servicesLabel", defaults.home.servicesLabel);
 
   useLayoutEffect(() => {
