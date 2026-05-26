@@ -93,7 +93,7 @@ export default function Clients() {
                 </motion.p>
             </section>
 
-            {/* Filter pills */}
+            {/* Filter pills — desktop */}
             <div className={styles.filters}>
                 {categories.map(cat => (
                     <button
@@ -104,6 +104,20 @@ export default function Clients() {
                         {cat}
                     </button>
                 ))}
+            </div>
+
+            {/* Filter dropdown — mobile */}
+            <div className={styles.filterDropdownWrap}>
+                <select
+                    className={styles.filterDropdown}
+                    value={activeFilter}
+                    onChange={e => setActiveFilter(e.target.value)}
+                >
+                    {categories.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                </select>
+                <span className={styles.filterDropdownArrow}>▾</span>
             </div>
 
             {/* Logo grid */}
