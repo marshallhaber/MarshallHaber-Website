@@ -8,7 +8,7 @@ import { getContent } from '../lib/content';
 import { defaults } from '../lib/contentDefaults';
 
 export default function Work() {
-  const [activeTab, setActiveTab] = useState('Featured');
+  const [activeTab, setActiveTab] = useState('All projects');
   const [hoveredSlug, setHoveredSlug] = useState(null);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
   const [searchQuery, setSearchQuery] = useState('');
