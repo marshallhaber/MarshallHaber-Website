@@ -52,30 +52,70 @@
   display: none;
   position: relative;
   padding: 0 1.5rem 2rem;
+  z-index: 10;
 }
 
-.filterDropdown {
+.filterDropdownTrigger {
   width: 100%;
-  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: #fff;
-  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  border: 1.5px solid rgba(0, 0, 0, 0.13);
   border-radius: 9999px;
-  padding: 0.75rem 2.5rem 0.75rem 1.4rem;
-  font-size: 0.9rem;
+  padding: 0.85rem 1.4rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #020817;
   cursor: pointer;
-  outline: none;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  letter-spacing: 0.01em;
 }
 
-.filterDropdownArrow {
+.filterDropdownMenu {
   position: absolute;
-  right: 2.8rem;
-  top: 50%;
-  transform: translateY(-65%);
-  pointer-events: none;
-  font-size: 1rem;
+  top: calc(100% - 1rem);
+  left: 1.5rem;
+  right: 1.5rem;
+  background: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  list-style: none;
+  margin: 0;
+  padding: 0.4rem;
+  overflow: hidden;
+}
+
+.filterDropdownItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
   color: #020817;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.filterDropdownItem:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.filterDropdownItemActive {
+  background: #111;
+  color: #fff;
+  font-weight: 600;
+}
+
+.filterDropdownItemActive:hover {
+  background: #222;
 }
 
 @media (max-width: 640px) {

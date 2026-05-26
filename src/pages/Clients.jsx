@@ -1,5 +1,5 @@
-import { useRef, useState, useLayoutEffect } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useRef, useState, useLayoutEffect, useEffect } from 'react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import TransitionLink from '../components/ui/TransitionLink';
 import ContactModal from '../components/ui/ContactModal';
 import styles from './Clients.module.css';
@@ -48,7 +48,19 @@ export default function Clients() {
     const categories = ['All', ...Array.from(new Set(clients.map(c => c.category).filter(Boolean)))];
 
     const [activeFilter, setActiveFilter] = useState('All');
+    const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        function handleClick(e) {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setDropdownOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClick);
+        return () => document.removeEventListener('mousedown', handleClick);
+    }, []);
 
     const filtered = activeFilter === 'All'
         ? clients
@@ -107,17 +119,47 @@ export default function Clients() {
             </div>
 
             {/* Filter dropdown — mobile */}
-            <div className={styles.filterDropdownWrap}>
-                <select
-                    className={styles.filterDropdown}
-                    value={activeFilter}
-                    onChange={e => setActiveFilter(e.target.value)}
+            <div className={styles.filterDropdownWrap} ref={dropdownRef}>
+                <button
+                    className={styles.filterDropdownTrigger}
+                    onClick={() => setDropdownOpen(o => !o)}
                 >
-                    {categories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                </select>
-                <span className={styles.filterDropdownArrow}>▾</span>
+                    <span>{activeFilter}</span>
+                    <motion.svg
+                        animate={{ rotate: dropdownOpen ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                        width="16" height="16" viewBox="0 0 16 16" fill="none"
+                    >
+                        <path d="M4 6l4 4 4-4" stroke="#020817" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    </motion.svg>
+                </button>
+                <AnimatePresence>
+                    {dropdownOpen && (
+                        <motion.ul
+                            className={styles.filterDropdownMenu}
+                            initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                        >
+                            {categories.map(cat => (
+                                <li key={cat}>
+                                    <button
+                                        className={`${styles.filterDropdownItem} ${activeFilter === cat ? styles.filterDropdownItemActive : ''}`}
+                                        onClick={() => { setActiveFilter(cat); setDropdownOpen(false); }}
+                                    >
+                                        {cat}
+                                        {activeFilter === cat && (
+                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                                <path d="M2.5 7l3.5 3.5 5.5-6" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                                            </svg>
+                                        )}
+                                    </button>
+                                </li>
+                            ))}
+                        </motion.ul>
+                    )}
+                </AnimatePresence>
             </div>
 
             {/* Logo grid */}
