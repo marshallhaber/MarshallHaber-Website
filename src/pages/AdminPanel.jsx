@@ -139,7 +139,8 @@ const PAGE_CONFIG = {
         fields: [
           { name: "title", label: "Title", type: "text" },
           { name: "slug", label: "URL Slug", type: "text" },
-          { name: "sortOrder", label: "Sort Order (Number, lower = first)", type: "numbering" },
+          { name: "sortOrder", label: "Sort Order on Work Page (lower = first)", type: "numbering" },
+          { name: "homeSortOrder", label: "Sort Order on Home Page (lower = first)", type: "numbering" },
           { name: "featuredOnWork", label: "Feature on Work Page (Featured Tab)", type: "boolean" },
           { name: "featuredOnHome", label: "Feature on Home Page", type: "boolean" },
           { name: "subtitle", label: "Subtitle", type: "text" },

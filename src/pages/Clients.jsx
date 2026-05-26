@@ -45,8 +45,7 @@ export default function Clients() {
     const ctaHeading = getContent(sections, "cta.heading", defaults.clients.cta.heading);
     const ctaButtonText = getContent(sections, "cta.buttonText", defaults.clients.cta.buttonText);
 
-    const allowedCategories = new Set(['All', 'Finance', 'Nonprofit', 'Real Estate', 'Education', 'Healthcare', 'Entertainment', 'Government', 'Legal']);
-    const categories = ['All', ...Array.from(new Set(clients.map(c => c.category)))].filter(cat => allowedCategories.has(cat));
+    const categories = ['All', ...Array.from(new Set(clients.map(c => c.category).filter(Boolean)))];
 
     const [activeFilter, setActiveFilter] = useState('All');
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);

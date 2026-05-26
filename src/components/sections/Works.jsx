@@ -31,7 +31,9 @@ export default function Works() {
         image: p.imageUrl || '',
         video: p.videoUrl || '',
         featuredOnHome: p.featuredOnHome === true || p.featuredOnHome === "true",
-      }));
+        homeSortOrder: parseInt(p.homeSortOrder, 10) || 999,
+      }))
+      .sort((a, b) => a.homeSortOrder - b.homeSortOrder);
 
     const explicitlyFeatured = cmsProjects.filter(p => p.featuredOnHome);
     if (explicitlyFeatured.length > 0) {
