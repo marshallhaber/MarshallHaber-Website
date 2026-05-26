@@ -1,6 +1,10 @@
 import { motion } from "framer-motion";
 import AnimatedCounter from "../ui/AnimatedCounter";
 import strategyVid from "../../assets/vid2.mp4";
+import torontoImg from "../../assets/myWork/TopImages/toronto.png";
+import optifinoPng from "../../assets/myWork/TopImages/optifino.png";
+import memriImg from "../../assets/myWork/TopImages/memri.png";
+import jpMorganImg from "../../assets/myWork/TopImages/jpMorgan.png";
 
 export default function ServiceBlock({
   title,
@@ -126,7 +130,7 @@ export default function ServiceBlock({
 export const StrategyVideo = () => (
   <div className="w-full h-full relative overflow-hidden bg-black/5">
     <img
-      src="/src/assets/myWork/TopImages/toronto.png"
+      src={torontoImg}
       alt="Brand Strategy"
       className="absolute inset-0 w-full h-full object-cover"
     />
@@ -136,7 +140,7 @@ export const StrategyVideo = () => (
 export const VisualImage = () => (
   <div className="w-full h-full relative overflow-hidden bg-black/5">
     <img
-      src="/src/assets/myWork/TopImages/optifino.png"
+      src={optifinoPng}
       alt="Identity"
       className="absolute inset-0 w-full h-full object-cover"
     />
@@ -146,7 +150,7 @@ export const VisualImage = () => (
 export const WebsiteImage = () => (
   <div className="w-full h-full relative overflow-hidden bg-black/5">
     <img
-      src="/src/assets/myWork/TopImages/memri.png"
+      src={memriImg}
       alt="Digital"
       className="absolute inset-0 w-full h-full object-cover"
     />
@@ -156,7 +160,7 @@ export const WebsiteImage = () => (
 export const ProductImage = () => (
   <div className="w-full h-full relative overflow-hidden bg-black/5">
     <img
-      src="/src/assets/myWork/TopImages/jpMorgan.png"
+      src={jpMorganImg}
       alt="Product"
       className="absolute inset-0 w-full h-full object-cover"
     />
