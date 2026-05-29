@@ -494,17 +494,25 @@ const PAGE_CONFIG = {
 function MediaUploader({ type, value, onChange }) {
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
   async function handleFile(file) {
     if (!file) return;
     setUploading(true);
+    setUploadError("");
     const fd = new FormData();
     fd.append(type, file);
     try {
       const res = await fetch(`${API}/upload-${type}`, { method: "POST", headers, body: fd });
       const data = await res.json();
-      if (data.url) onChange(data.url);
-    } catch { }
+      if (data.url) {
+        onChange(data.url);
+      } else {
+        setUploadError(data.error || "Upload failed — no URL returned.");
+      }
+    } catch (err) {
+      setUploadError(err.message || "Upload failed. Check your connection and try again.");
+    }
     setUploading(false);
   }
 
@@ -524,27 +532,37 @@ function MediaUploader({ type, value, onChange }) {
   }
 
   return (
-    <div className={styles.dropzone} onClick={() => inputRef.current?.click()}>
-      <input
-        ref={inputRef}
-        type="file"
-        accept={type === "image" ? "image/*" : "video/*"}
-        className={styles.hiddenInput}
-        onChange={(e) => handleFile(e.target.files[0])}
-      />
-      {uploading ? (
-        <div className={styles.spinner} />
-      ) : (
-        <>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={styles.dropzoneIcon}>
-            {type === "image" ? (
-              <><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></>
-            ) : (
-              <polygon points="5 3 19 12 5 21 5 3" />
-            )}
-          </svg>
-          <span>Click to upload {type}</span>
-        </>
+    <div>
+      <div className={styles.dropzone} onClick={() => inputRef.current?.click()}>
+        <input
+          ref={inputRef}
+          type="file"
+          accept={type === "image" ? "image/*" : "video/*"}
+          className={styles.hiddenInput}
+          onChange={(e) => handleFile(e.target.files[0])}
+        />
+        {uploading ? (
+          <>
+            <div className={styles.spinner} />
+            <span style={{ marginTop: "0.5rem", fontSize: "0.78rem", opacity: 0.6 }}>Uploading{type === "video" ? " (may take ~30s for video)" : ""}…</span>
+          </>
+        ) : (
+          <>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={styles.dropzoneIcon}>
+              {type === "image" ? (
+                <><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></>
+              ) : (
+                <polygon points="5 3 19 12 5 21 5 3" />
+              )}
+            </svg>
+            <span>Click to upload {type}</span>
+          </>
+        )}
+      </div>
+      {uploadError && (
+        <p style={{ marginTop: "0.4rem", fontSize: "0.78rem", color: "#e53e3e" }}>
+          ⚠ {uploadError}
+        </p>
       )}
     </div>
   );

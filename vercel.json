@@ -3,8 +3,7 @@
   "buildCommand": "vite build",
   "outputDirectory": "dist",
   "functions": {
-    "api/admin/upload-image.js": { "maxDuration": 30 },
-    "api/admin/upload-video.js": { "maxDuration": 60 }
+    "api/admin/[...path].js": { "maxDuration": 60 }
   },
   "redirects": [
     { "source": "/index.php", "destination": "/", "permanent": true },
