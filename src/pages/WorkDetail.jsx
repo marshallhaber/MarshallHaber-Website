@@ -221,7 +221,16 @@ export default function WorkDetail() {
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             {project.video ? (
-              <video ref={mutedVideoRef} src={project.video} autoPlay muted loop playsInline className={styles.mainImage} />
+              <video
+                ref={mutedVideoRef}
+                src={project.video}
+                autoPlay muted loop playsInline
+                className={styles.mainImage}
+                onLoadStart={() => console.log('[Video] load started:', project.video)}
+                onCanPlay={() => console.log('[Video] can play')}
+                onPlaying={() => console.log('[Video] playing')}
+                onError={(e) => console.log('[Video] ERROR:', e.target.error?.code, e.target.error?.message)}
+              />
             ) : (
               <img src={project.image} alt={project.title} className={styles.mainImage} />
             )}
