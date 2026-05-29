@@ -448,10 +448,11 @@ export default function Navbar() {
             <img
               src="/logo.svg"
               alt="MHCG"
-              className="absolute left-0 top-0 h-8 w-auto cursor-pointer transition-all duration-700 ease-in-out"
+              className="absolute left-0 top-0 h-14 w-auto cursor-pointer transition-all duration-700 ease-in-out"
               style={{
                 opacity: showCenterLogo ? 1 : 0,
                 filter: isLightBg ? "brightness(0)" : "invert(1)",
+                marginTop: "-10px",
               }}
             />
           </div>
