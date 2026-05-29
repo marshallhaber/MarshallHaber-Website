@@ -42,6 +42,15 @@
   margin-top: 8rem;
 }
 
+@media (max-width: 768px) {
+  .estSection {
+    padding-top: 8vh;
+  }
+  .tagline {
+    margin-top: 2rem;
+  }
+}
+
 .taglineBold {
   font-size: clamp(1.2rem, 2vw, 1.6rem);
   font-weight: 700;
