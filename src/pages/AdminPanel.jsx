@@ -493,6 +493,8 @@ function MediaUploader({ type, value, onChange }) {
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [urlInput, setUrlInput] = useState("");
+  const [showUrlInput, setShowUrlInput] = useState(false);
 
   async function handleFile(file) {
     if (!file) return;
@@ -557,6 +559,53 @@ function MediaUploader({ type, value, onChange }) {
           </>
         )}
       </div>
+
+      {/* URL paste option for video */}
+      {type === "video" && (
+        <div style={{ marginTop: "0.6rem" }}>
+          <button
+            type="button"
+            onClick={() => setShowUrlInput(v => !v)}
+            style={{ fontSize: "0.78rem", color: "#60a5fa", background: "none", border: "none", cursor: "pointer", padding: 0, textDecoration: "underline" }}
+          >
+            {showUrlInput ? "Hide" : "Or paste a video URL (Google Drive, Dropbox, etc.)"}
+          </button>
+
+          {showUrlInput && (
+            <div style={{ marginTop: "0.5rem", background: "#1a1a2e", borderRadius: "10px", padding: "0.9rem", border: "1px solid rgba(255,255,255,0.1)" }}>
+              <p style={{ fontSize: "0.72rem", color: "#94a3b8", marginBottom: "0.6rem", lineHeight: 1.6 }}>
+                <strong style={{ color: "#e2e8f0" }}>How to get a direct video URL:</strong><br />
+                <strong style={{ color: "#fbbf24" }}>Google Drive:</strong> Open file → Share → "Anyone with link" → copy the link. Then change:<br />
+                <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>
+                  drive.google.com/file/d/FILE_ID/view
+                </code>{" "}→{" "}
+                <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>
+                  drive.google.com/uc?export=download&id=FILE_ID
+                </code><br /><br />
+                <strong style={{ color: "#fbbf24" }}>Dropbox:</strong> Share → copy link → change <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>?dl=0</code> to <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>?raw=1</code><br /><br />
+                <strong style={{ color: "#fbbf24" }}>Any CDN:</strong> Paste a direct <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>.mp4</code> URL
+              </p>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <input
+                  type="text"
+                  placeholder="Paste video URL here…"
+                  value={urlInput}
+                  onChange={e => setUrlInput(e.target.value)}
+                  style={{ flex: 1, background: "#0f172a", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "6px", padding: "0.45rem 0.7rem", fontSize: "0.78rem", color: "#e2e8f0", outline: "none" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => { if (urlInput.trim()) { onChange(urlInput.trim()); setUrlInput(""); setShowUrlInput(false); } }}
+                  style={{ background: "#3b82f6", color: "#fff", border: "none", borderRadius: "6px", padding: "0.45rem 0.9rem", fontSize: "0.78rem", cursor: "pointer", fontWeight: 600 }}
+                >
+                  Use URL
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {uploadError && (
         <p style={{ marginTop: "0.4rem", fontSize: "0.78rem", color: "#e53e3e" }}>
           ⚠ {uploadError}
