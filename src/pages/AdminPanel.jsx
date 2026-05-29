@@ -599,7 +599,7 @@ function MediaUploader({ type, value, onChange }) {
                       if (matchQuery) fileId = matchQuery[1];
                     }
                     const finalUrl = fileId
-                      ? `https://drive.usercontent.google.com/download?id=${fileId}&export=download`
+                      ? `https://drive.usercontent.google.com/download?id=${fileId}`
                       : raw;
                     onChange(finalUrl);
                     setUrlInput("");
