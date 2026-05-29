@@ -100,6 +100,7 @@ export default function WorkDetail() {
   }, [workSections]);
 
   const project = projects.find((p) => p.slug === slug);
+  console.log('[WorkDetail] project:', project?.title, '| video:', project?.video);
 
   useLayoutEffect(() => {
     document.body.style.backgroundColor = "#fbf0f2";
