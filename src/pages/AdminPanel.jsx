@@ -250,9 +250,7 @@ const PAGE_CONFIG = {
           {
             name: "homeSortOrder",
             label: "Home Page Order (lower = first)",
-            type: "number",
-            min: 1,
-            step: 1,
+            type: "numbering",
             description: "Controls the display order of this logo on the home page. Leave blank to use default order."
           },
         ],
