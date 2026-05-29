@@ -101,7 +101,6 @@ export default function WorkDetail() {
 
   const project = projects.find((p) => p.slug === slug);
   const mutedVideoRef = useCallback(node => { if (node) node.muted = true; }, []);
-  console.log('[Video URL]', project?.video);
 
   useLayoutEffect(() => {
     document.body.style.backgroundColor = "#fbf0f2";
@@ -226,8 +225,6 @@ export default function WorkDetail() {
                 src={project.video}
                 autoPlay muted loop playsInline
                 className={styles.mainImage}
-                onError={(e) => console.log('[Video ERROR]', e.target.error?.code, e.target.error?.message)}
-                onPlaying={() => console.log('[Video PLAYING]')}
               />
             ) : (
               <img src={project.image} alt={project.title} className={styles.mainImage} />
