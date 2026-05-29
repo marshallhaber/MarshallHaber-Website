@@ -428,18 +428,18 @@ export default function Navbar() {
       className="w-full flex items-center justify-between px-4 md:px-8 py-4 md:py-8 pointer-events-none"
       style={{ position: "relative", zIndex: 9999 }}
     >
-      <div className="md:hidden block pointer-events-auto leading-none mt-4 relative h-9 w-40">
+      <div className="md:hidden block pointer-events-auto leading-none mt-4 relative h-12 w-40">
         <TransitionLink to="/" className="block w-full h-full relative">
           <div className="relative flex items-center h-full w-full">
             <img
               src="/logonewlong.png"
               alt=""
-              className="h-9 w-auto opacity-0 pointer-events-none"
+              className="h-12 w-auto opacity-0 pointer-events-none"
             />
             <img
               src="/logonewlong.png"
               alt="Marshall Haber Creative Group"
-              className="absolute left-0 top-0 h-9 w-auto cursor-pointer transition-all duration-700 ease-in-out"
+              className="absolute left-0 top-0 h-12 w-auto cursor-pointer transition-all duration-700 ease-in-out"
               style={{
                 opacity: showCenterLogo ? 0 : 1,
                 filter: isLightBg ? "invert(1) brightness(0)" : "none",
@@ -448,7 +448,7 @@ export default function Navbar() {
             <img
               src="/logo.svg"
               alt="MHCG"
-              className="absolute left-0 top-0 h-9 w-auto cursor-pointer transition-all duration-700 ease-in-out"
+              className="absolute left-0 top-0 h-12 w-auto cursor-pointer transition-all duration-700 ease-in-out"
               style={{
                 opacity: showCenterLogo ? 1 : 0,
                 filter: isLightBg ? "brightness(0)" : "invert(1)",
