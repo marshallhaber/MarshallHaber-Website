@@ -225,6 +225,7 @@ export default function WorkDetail() {
                 ref={mutedVideoRef}
                 src={project.video}
                 autoPlay muted loop playsInline
+                crossOrigin="anonymous"
                 className={styles.mainImage}
                 onError={(e) => console.log('[Video ERROR]', e.target.error?.code, e.target.error?.message)}
                 onPlaying={() => console.log('[Video PLAYING]')}
@@ -268,7 +269,7 @@ export default function WorkDetail() {
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, delay: 0.1 }}
           >
-            <video ref={mutedVideoRef} src={project.video2} autoPlay muted loop playsInline className={styles.mainImage} />
+            <video ref={mutedVideoRef} src={project.video2} autoPlay muted loop playsInline crossOrigin="anonymous" className={styles.mainImage} />
           </motion.section>
         )}
 
