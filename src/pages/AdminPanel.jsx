@@ -575,12 +575,13 @@ function MediaUploader({ type, value, onChange }) {
             <div style={{ marginTop: "0.5rem", background: "#1a1a2e", borderRadius: "10px", padding: "0.9rem", border: "1px solid rgba(255,255,255,0.1)" }}>
               <p style={{ fontSize: "0.72rem", color: "#94a3b8", marginBottom: "0.6rem", lineHeight: 1.6 }}>
                 <strong style={{ color: "#e2e8f0" }}>How to get a direct video URL:</strong><br />
-                <strong style={{ color: "#fbbf24" }}>Google Drive:</strong> Open file → Share → "Anyone with link" → copy the link. Then change:<br />
-                <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>
+                <strong style={{ color: "#fbbf24" }}>Google Drive:</strong> Open file → Share → "Anyone with link" → copy the link. Your share link looks like:<br />
+                <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#f87171" }}>
                   drive.google.com/file/d/FILE_ID/view
-                </code>{" "}→{" "}
+                </code><br />
+                Replace with this format (copy FILE_ID from your link):<br />
                 <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>
-                  drive.google.com/uc?export=download&id=FILE_ID
+                  drive.usercontent.google.com/download?id=FILE_ID&export=download
                 </code><br /><br />
                 <strong style={{ color: "#fbbf24" }}>Dropbox:</strong> Share → copy link → change <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>?dl=0</code> to <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>?raw=1</code><br /><br />
                 <strong style={{ color: "#fbbf24" }}>Any CDN:</strong> Paste a direct <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>.mp4</code> URL
