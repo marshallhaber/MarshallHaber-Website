@@ -154,17 +154,22 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 20px;
+  padding: 12px 28px;
   border: none;
-  border-radius: 7px;
+  border-radius: 9999px;
   background: #fff;
   color: #09090b;
-  font-size: 0.825rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.12s;
   white-space: nowrap;
   flex-shrink: 0;
+  position: fixed;
+  bottom: 28px;
+  right: 32px;
+  z-index: 100;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.35);
 }
 
 .publishBtn:hover {
