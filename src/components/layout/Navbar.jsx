@@ -446,7 +446,7 @@ export default function Navbar() {
               }}
             />
             <img
-              src="/logo.png"
+              src="/logo.svg"
               alt="MHCG"
               className="absolute left-0 top-0 h-6 w-auto cursor-pointer transition-all duration-700 ease-in-out"
               style={{
@@ -489,7 +489,7 @@ export default function Navbar() {
               }}
             />
             <img
-              src="/logo.png"
+              src="/logo.svg"
               alt="MHCG"
               className="absolute h-16 w-auto cursor-pointer transition-all duration-700 ease-in-out"
               style={{

@@ -47,6 +47,7 @@ export default function Services() {
           imageUrl={panel.imageUrl}
           mediaTitle={panel.mediaTitle}
           mediaLabel={panel.mediaLabel}
+          hideImage={panel.hideImage === true || panel.hideImage === "true"}
         />
       ),
     };

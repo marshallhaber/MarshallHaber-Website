@@ -16,6 +16,7 @@ export default function ServiceBlock({
   imageUrl,
   mediaTitle,
   mediaLabel,
+  hideImage = false,
 }) {
   const items = Array.isArray(list)
     ? list
@@ -111,17 +112,19 @@ export default function ServiceBlock({
       </div>
 
       {/* RIGHT: image at top-right corner with padding */}
-      <motion.div
-        initial={{ opacity: 0, x: 60 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, margin: "-10%" }}
-        transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-        className="w-full md:w-[40%] flex items-start justify-end p-6 md:p-10"
-      >
-        <div className="w-full max-w-[420px] aspect-square rounded-2xl overflow-hidden">
-          {dynamicContent}
-        </div>
-      </motion.div>
+      {!hideImage && (
+        <motion.div
+          initial={{ opacity: 0, x: 60 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-10%" }}
+          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          className="w-full md:w-[40%] flex items-start justify-end p-6 md:p-10"
+        >
+          <div className="w-full max-w-[420px] aspect-square rounded-2xl overflow-hidden">
+            {dynamicContent}
+          </div>
+        </motion.div>
+      )}
 
     </div>
   );

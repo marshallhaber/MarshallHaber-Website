@@ -292,6 +292,7 @@ const PAGE_CONFIG = {
           { name: "imageUrl", label: "Overlay Image (fallback)", type: "image" },
           { name: "mediaTitle", label: "Card Title (e.g. Imagination beyond limits)", type: "textarea" },
           { name: "mediaLabel", label: "Card Label (e.g. strategy.mp4)", type: "text" },
+          { name: "hideImage", label: "Hide Image / Video Panel", type: "boolean", description: "Turn off the right-side image/video block for this service panel." },
           { name: "featureOnHome", label: "Feature on Homepage", type: "boolean" },
         ],
       },
