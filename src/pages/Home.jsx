@@ -120,6 +120,7 @@ export default function Home() {
           imageUrl={panel.imageUrl}
           mediaTitle={panel.mediaTitle}
           mediaLabel={panel.mediaLabel}
+          hideImage={panel.hideImage === true || panel.hideImage === "true"}
         />
       ),
     };
