@@ -26,7 +26,15 @@ export default function ClientSection() {
   const { sections } = usePageContent("clients");
   const allClients = getContent(sections, "list", defaults.clients.list);
 
-  const homeClients = allClients.filter(c => c.showOnHome === true || c.showOnHome === "true");
+  const homeClients = allClients
+    .filter(c => c.showOnHome === true || c.showOnHome === "true")
+    .sort((a, b) => {
+      const aOrder = parseInt(a.homeSortOrder, 10);
+      const bOrder = parseInt(b.homeSortOrder, 10);
+      const aVal = isNaN(aOrder) ? 9999 : aOrder;
+      const bVal = isNaN(bOrder) ? 9999 : bOrder;
+      return aVal - bVal;
+    });
   const clients = homeClients.length > 0 ? homeClients : allClients.slice(0, 16);
 
   return (
