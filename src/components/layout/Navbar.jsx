@@ -495,7 +495,7 @@ export default function Navbar() {
               style={{
                 opacity: showCenterLogo ? 1 : 0,
                 filter: isLightBg ? "brightness(0)" : "invert(1)",
-                marginTop: "-18px",
+                marginTop: "-32px",
               }}
             />
           </div>
