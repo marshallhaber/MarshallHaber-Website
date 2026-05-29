@@ -560,7 +560,7 @@ function MediaUploader({ type, value, onChange }) {
         )}
       </div>
 
-      {/* URL paste option for video */}
+      {/* Google Drive URL option for video */}
       {type === "video" && (
         <div style={{ marginTop: "0.6rem" }}>
           <button
@@ -568,38 +568,46 @@ function MediaUploader({ type, value, onChange }) {
             onClick={() => setShowUrlInput(v => !v)}
             style={{ fontSize: "0.78rem", color: "#60a5fa", background: "none", border: "none", cursor: "pointer", padding: 0, textDecoration: "underline" }}
           >
-            {showUrlInput ? "Hide" : "Or paste a video URL (Google Drive, Dropbox, etc.)"}
+            {showUrlInput ? "Hide" : "Or use a Google Drive link"}
           </button>
 
           {showUrlInput && (
             <div style={{ marginTop: "0.5rem", background: "#1a1a2e", borderRadius: "10px", padding: "0.9rem", border: "1px solid rgba(255,255,255,0.1)" }}>
               <p style={{ fontSize: "0.72rem", color: "#94a3b8", marginBottom: "0.6rem", lineHeight: 1.6 }}>
-                <strong style={{ color: "#e2e8f0" }}>How to get a direct video URL:</strong><br />
-                <strong style={{ color: "#fbbf24" }}>Google Drive:</strong> Open file → Share → "Anyone with link" → copy the link. Your share link looks like:<br />
-                <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#f87171" }}>
-                  drive.google.com/file/d/FILE_ID/view
-                </code><br />
-                Replace with this format (copy FILE_ID from your link):<br />
-                <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>
-                  drive.usercontent.google.com/download?id=FILE_ID&export=download
-                </code><br /><br />
-                <strong style={{ color: "#fbbf24" }}>Dropbox:</strong> Share → copy link → change <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>?dl=0</code> to <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>?raw=1</code><br /><br />
-                <strong style={{ color: "#fbbf24" }}>Any CDN:</strong> Paste a direct <code style={{ fontSize: "0.68rem", background: "#0f172a", padding: "2px 5px", borderRadius: 4, color: "#86efac" }}>.mp4</code> URL
+                <strong style={{ color: "#e2e8f0" }}>Google Drive:</strong> Open the file → Share → set to <em>"Anyone with the link"</em> → copy and paste the link below. It will be automatically converted.
               </p>
               <div style={{ display: "flex", gap: "0.5rem" }}>
                 <input
                   type="text"
-                  placeholder="Paste video URL here…"
+                  placeholder="Paste Google Drive share link…"
                   value={urlInput}
                   onChange={e => setUrlInput(e.target.value)}
                   style={{ flex: 1, background: "#0f172a", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "6px", padding: "0.45rem 0.7rem", fontSize: "0.78rem", color: "#e2e8f0", outline: "none" }}
                 />
                 <button
                   type="button"
-                  onClick={() => { if (urlInput.trim()) { onChange(urlInput.trim()); setUrlInput(""); setShowUrlInput(false); } }}
-                  style={{ background: "#3b82f6", color: "#fff", border: "none", borderRadius: "6px", padding: "0.45rem 0.9rem", fontSize: "0.78rem", cursor: "pointer", fontWeight: 600 }}
+                  onClick={() => {
+                    const raw = urlInput.trim();
+                    if (!raw) return;
+                    let fileId = null;
+                    // Format: drive.google.com/file/d/FILE_ID/...
+                    const matchPath = raw.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+                    if (matchPath) fileId = matchPath[1];
+                    // Format: drive.google.com/uc?...id=FILE_ID or ?id=FILE_ID&...
+                    if (!fileId) {
+                      const matchQuery = raw.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+                      if (matchQuery) fileId = matchQuery[1];
+                    }
+                    const finalUrl = fileId
+                      ? `https://drive.usercontent.google.com/download?id=${fileId}&export=download`
+                      : raw;
+                    onChange(finalUrl);
+                    setUrlInput("");
+                    setShowUrlInput(false);
+                  }}
+                  style={{ background: "#3b82f6", color: "#fff", border: "none", borderRadius: "6px", padding: "0.45rem 0.9rem", fontSize: "0.78rem", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}
                 >
-                  Use URL
+                  Use Link
                 </button>
               </div>
             </div>
