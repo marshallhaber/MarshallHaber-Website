@@ -100,7 +100,6 @@ export default function WorkDetail() {
   }, [workSections]);
 
   const project = projects.find((p) => p.slug === slug);
-  console.log('[WorkDetail] project:', project?.title, '| video:', project?.video);
   const mutedVideoRef = useCallback(node => { if (node) node.muted = true; }, []);
 
   useLayoutEffect(() => {
@@ -226,10 +225,6 @@ export default function WorkDetail() {
                 src={project.video}
                 autoPlay muted loop playsInline
                 className={styles.mainImage}
-                onLoadStart={() => console.log('[Video] load started:', project.video)}
-                onCanPlay={() => console.log('[Video] can play')}
-                onPlaying={() => console.log('[Video] playing')}
-                onError={(e) => console.log('[Video] ERROR:', e.target.error?.code, e.target.error?.message)}
               />
             ) : (
               <img src={project.image} alt={project.title} className={styles.mainImage} />
