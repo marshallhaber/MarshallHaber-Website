@@ -212,7 +212,6 @@ export default function Work() {
                         loop
                         muted
                         playsInline
-                        crossOrigin="anonymous"
                         className={styles.cardMedia}
                       />
                     ) : project.image ? (
