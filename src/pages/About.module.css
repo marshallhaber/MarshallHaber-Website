@@ -42,15 +42,6 @@
   margin-top: 8rem;
 }
 
-@media (max-width: 768px) {
-  .estSection {
-    padding-top: 8vh;
-  }
-  .tagline {
-    margin-top: 2rem;
-  }
-}
-
 .taglineBold {
   font-size: clamp(1.2rem, 2vw, 1.6rem);
   font-weight: 700;
@@ -251,8 +242,15 @@
 }
 
 @media (max-width: 768px) {
+  .estSection {
+    padding-top: 6vh;
+    padding-bottom: 0;
+  }
+
   .heroSection {
-    min-height: 80vh;
+    min-height: unset;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
   }
 
   .ctaSection {
