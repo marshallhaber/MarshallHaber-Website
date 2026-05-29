@@ -158,7 +158,7 @@ export default function InsightDetail() {
     >
       <div className={styles.container}>
         {/* Back Button */}
-        <TransitionLink to="/insights" className={styles.backLink}>
+        <TransitionLink to="/" className={styles.backLink}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="15 18 9 12 15 6" />
           </svg>

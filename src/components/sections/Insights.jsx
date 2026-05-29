@@ -84,20 +84,6 @@ export default function Insights() {
             </motion.h2>
           </Reveal>
 
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="flex items-center gap-2 shrink-0 mt-2"
-          >
-            <motion.div
-              style={{ borderColor: buttonBorder, color: buttonBorder }}
-              className="w-8 h-8 border-[0.5px] border-opacity-30 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-            >
-              ←
-            </motion.div>
-          </motion.div>
         </div>
 
         {/* Cards */}
