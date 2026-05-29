@@ -99,6 +99,36 @@ app.post("/api/admin/upload-video", adminAuth, upload.single("video"), async (re
   }
 });
 
+// Proxy video — fetches from Google Drive server-side, bypassing CORS/cookie issues
+app.get("/api/admin/proxy-video", async (req, res) => {
+  const { url } = req.query;
+  if (!url) return res.status(400).json({ error: "Missing url param" });
+  try {
+    const https = require("https");
+    const http = require("http");
+    const fetch = (u) => new Promise((resolve, reject) => {
+      const mod = u.startsWith("https") ? https : http;
+      mod.get(u, { headers: { "User-Agent": "Mozilla/5.0" } }, (r) => {
+        if (r.statusCode >= 300 && r.statusCode < 400 && r.headers.location) {
+          resolve(fetch(r.headers.location));
+        } else {
+          resolve(r);
+        }
+      }).on("error", reject);
+    });
+    const upstream = await fetch(url);
+    res.setHeader("Content-Type", upstream.headers["content-type"] || "video/mp4");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    if (upstream.headers["content-length"]) {
+      res.setHeader("Content-Length", upstream.headers["content-length"]);
+    }
+    upstream.pipe(res);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET all pages
 app.get("/api/admin/pages", async (req, res) => {
   try {

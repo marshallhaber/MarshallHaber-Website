@@ -598,9 +598,10 @@ function MediaUploader({ type, value, onChange }) {
                       const matchQuery = raw.match(/[?&]id=([a-zA-Z0-9_-]+)/);
                       if (matchQuery) fileId = matchQuery[1];
                     }
-                    const finalUrl = fileId
+                    const driveUrl = fileId
                       ? `https://drive.usercontent.google.com/download?id=${fileId}`
                       : raw;
+                    const finalUrl = `/api/admin/proxy-video?url=${encodeURIComponent(driveUrl)}`;
                     onChange(finalUrl);
                     setUrlInput("");
                     setShowUrlInput(false);
