@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useMemo } from 'react';
+import { useState, useLayoutEffect, useMemo, useCallback } from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import TransitionLink from '../components/ui/TransitionLink';
@@ -101,6 +101,7 @@ export default function WorkDetail() {
 
   const project = projects.find((p) => p.slug === slug);
   console.log('[WorkDetail] project:', project?.title, '| video:', project?.video);
+  const mutedVideoRef = useCallback(node => { if (node) node.muted = true; }, []);
 
   useLayoutEffect(() => {
     document.body.style.backgroundColor = "#fbf0f2";
@@ -220,7 +221,7 @@ export default function WorkDetail() {
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             {project.video ? (
-              <video src={project.video} autoPlay muted loop playsInline className={styles.mainImage} />
+              <video ref={mutedVideoRef} src={project.video} autoPlay muted loop playsInline className={styles.mainImage} />
             ) : (
               <img src={project.image} alt={project.title} className={styles.mainImage} />
             )}
@@ -260,7 +261,7 @@ export default function WorkDetail() {
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, delay: 0.1 }}
           >
-            <video src={project.video2} autoPlay muted loop playsInline className={styles.mainImage} />
+            <video ref={mutedVideoRef} src={project.video2} autoPlay muted loop playsInline className={styles.mainImage} />
           </motion.section>
         )}
 
