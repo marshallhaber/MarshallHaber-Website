@@ -115,7 +115,7 @@ export default function Insights() {
                   className="flex flex-col gap-0 cursor-pointer"
                   style={{ width: "100%", minWidth: 0 }}
                 >
-                  {/* Card box — locked aspect ratio via padding trick */}
+                  {/* Card box — locked 16:9 aspect ratio. All inner text uses cqw so it scales with the card's own width. */}
                   <div
                     style={{
                       position: "relative",
@@ -123,6 +123,7 @@ export default function Insights() {
                       paddingTop: "55.5556%",
                       backgroundColor: card.bg,
                       overflow: "hidden",
+                      containerType: "inline-size",
                     }}
                   >
                     <div
@@ -130,23 +131,32 @@ export default function Insights() {
                       style={{
                         position: "absolute",
                         inset: 0,
-                        padding: "clamp(24px, 4vw, 48px)",
+                        padding: "5cqw",
                         color:
                           card.bg === "#2B59C3" || card.bg === "#0B0215"
                             ? "#fbf0f2"
                             : "#020817",
                       }}
                     >
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-6 opacity-50">
+                      <p
+                        className="font-bold uppercase opacity-50"
+                        style={{
+                          fontSize: "2.2cqw",
+                          letterSpacing: "0.18em",
+                          marginBottom: "4cqw",
+                        }}
+                      >
                         {card.brand}
                       </p>
 
                       {card.label && card.label !== (card.titleLarge || card.title) && (
                         <p
-                          className="text-sm mb-3 tracking-wide leading-snug"
                           style={{
                             fontFamily: "'Nib Pro', serif",
                             fontStyle: "italic",
+                            fontSize: "3.4cqw",
+                            lineHeight: 1.35,
+                            marginBottom: "2.5cqw",
                             color: card.labelColor || "inherit",
                           }}
                         >
@@ -155,10 +165,11 @@ export default function Insights() {
                       )}
 
                       <h3
-                        className="font-bold leading-tight tracking-tight"
+                        className="font-bold tracking-tight"
                         style={{
                           fontFamily: "'PP Mori', sans-serif",
-                          fontSize: "clamp(1.5rem, 2.5vw, 2.4rem)",
+                          fontSize: "6cqw",
+                          lineHeight: 1.1,
                         }}
                       >
                         {(card.titleLarge || card.title).split("\n").map((line, j, arr) => (
