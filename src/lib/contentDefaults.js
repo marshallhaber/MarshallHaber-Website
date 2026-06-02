@@ -29,7 +29,7 @@ export const defaults = {
       ],
     },
     works: {
-      headingBold: "Our clients range from ambitious solo entrepreneurs",
+      headingBold: "Our clients range from ambitious solopreneurs",
       headingItalic: "to global conglomerates.",
       ctaText: "See more projects",
     },
