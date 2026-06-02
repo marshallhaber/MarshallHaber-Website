@@ -46,7 +46,7 @@ export default function Works() {
     <div ref={containerRef} className="w-full px-6 pt-12 pb-10 bg-[#fbf0f2] text-[#020817]">
       <Reveal>
         <h2
-          className="text-[clamp(1.6rem,5.5vw,4rem)] font-bold leading-[1.1] mb-16 text-inherit text-center"
+          className="text-[clamp(1.8rem,5vw,4rem)] font-bold leading-[1.1] mb-16 text-inherit text-center md:whitespace-nowrap"
           style={{ fontFamily: "'PP Mori', sans-serif" }}
         >
           {headingBold} <br className="hidden md:block" /> <span className="italic font-normal" style={{ fontFamily: "'Nib Pro', serif" }}>{headingItalic}</span>
