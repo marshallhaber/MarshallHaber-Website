@@ -29,8 +29,8 @@ export const defaults = {
       ],
     },
     works: {
-      headingBold: "We partner with serious scaleups",
-      headingItalic: "in Europe and the Americas",
+      headingBold: "Our clients range from ambitious solo entrepreneurs",
+      headingItalic: "to global conglomerates.",
       ctaText: "See more projects",
     },
     insights: {
