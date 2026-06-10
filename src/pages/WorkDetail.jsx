@@ -78,23 +78,29 @@ export default function WorkDetail() {
   const projects = useMemo(() => {
     const cms = (workSections?.projects || [])
       .filter((p) => p && p.title)
-      .map((p) => ({
-        slug: p.slug || p.title.toLowerCase().replace(/\s+/g, '-'),
-        title: p.title,
-        subtitle: p.subtitle || '',
-        category: p.category || 'Uncategorized',
-        client: p.client || p.title,
-        services: p.services || '',
-        body: p.body || '',
-        description: p.description || '',
-        image: p.imageUrl || '',
-        video: p.videoUrl || '',
-        description2: p.description2 || '',
-        image2: p.image2Url || '',
-        video2: p.video2Url || '',
-        gallery: p.gallery || [],
-        fromCms: true,
-      }));
+      .map((p) => {
+        const rawMoreOrder = p.moreProjectsOrder;
+        const moreOrderNum = parseInt(rawMoreOrder, 10);
+        return {
+          slug: p.slug || p.title.toLowerCase().replace(/\s+/g, '-'),
+          title: p.title,
+          subtitle: p.subtitle || '',
+          category: p.category || 'Uncategorized',
+          client: p.client || p.title,
+          services: p.services || '',
+          body: p.body || '',
+          description: p.description || '',
+          image: p.imageUrl || '',
+          video: p.videoUrl || '',
+          description2: p.description2 || '',
+          image2: p.image2Url || '',
+          video2: p.video2Url || '',
+          gallery: p.gallery || [],
+          // Blank/invalid → null means "exclude from More Projects strip"
+          moreProjectsOrder: Number.isFinite(moreOrderNum) ? moreOrderNum : null,
+          fromCms: true,
+        };
+      });
 
     return cms;
   }, [workSections]);
@@ -118,7 +124,14 @@ export default function WorkDetail() {
     return <Navigate to="/work" replace />;
   }
 
-  const moreProjects = projects.filter(p => p.slug !== slug).slice(0, 3);
+  // Only projects with an explicit moreProjectsOrder appear in this strip,
+  // sorted ascending. Excludes the current project. Falls back to the first
+  // 3 of the CMS array if nothing has been ordered (preserves old behavior).
+  const candidates = projects.filter(p => p.slug !== slug);
+  const ordered = candidates
+    .filter(p => p.moreProjectsOrder !== null)
+    .sort((a, b) => a.moreProjectsOrder - b.moreProjectsOrder);
+  const moreProjects = ordered.length > 0 ? ordered.slice(0, 3) : candidates.slice(0, 3);
 
   return (
     <motion.div
