@@ -528,7 +528,12 @@ export default function Navbar() {
             className="fixed inset-0 bg-[#020817] z-[200] pointer-events-auto flex flex-col justify-between px-6 py-8 md:hidden text-[#fbf0f2]"
           >
             <div className="flex justify-between items-center">
-              <img src="/logonewlong.png" className="h-6" />
+              <img
+                src="/logo.svg"
+                alt="MHCG"
+                className="h-10 w-auto"
+                style={{ filter: "invert(1)" }}
+              />
               <button
                 onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
                 className="w-10 h-10 rounded-full bg-[#fbf0f2] text-[#020817] flex items-center justify-center cursor-pointer border border-white/20"
