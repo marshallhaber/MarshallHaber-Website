@@ -180,6 +180,7 @@ export default function Clients() {
                                                 style={{
                                                     transform: `scale(${scaleFactor})`,
                                                     transformOrigin: "center center",
+                                                    filter: /_white/i.test(client.logo || "") ? "invert(1)" : undefined,
                                                 }}
                                             />
                                         ) : (

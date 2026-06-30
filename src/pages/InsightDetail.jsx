@@ -165,18 +165,8 @@ export default function InsightDetail() {
           Back
         </TransitionLink>
 
-        {/* Header */}
+        {/* Header — title + tagline only (no eyebrow, no services info row) */}
         <section className={styles.heroHeader}>
-          {article.category && (
-            <motion.p
-              className={styles.eyebrow}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-            >
-              {article.category}
-            </motion.p>
-          )}
           <motion.h1
             className={styles.projectTitle}
             initial={{ opacity: 0, y: 20 }}
@@ -185,14 +175,14 @@ export default function InsightDetail() {
           >
             {article.title}
           </motion.h1>
-          {article.subtitle && (
+          {(article.subtitle || article.tag) && (
             <motion.p
               className={styles.tagline}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.15 }}
             >
-              {article.subtitle}
+              {article.subtitle || article.tag}
             </motion.p>
           )}
         </section>
