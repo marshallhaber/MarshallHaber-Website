@@ -219,6 +219,7 @@ export default function Work() {
                         src={project.image}
                         alt={project.title}
                         className={styles.cardMedia}
+                        style={/crossriver|_BIG/i.test(project.image || '') ? { objectFit: 'contain', padding: '2rem', background: '#ffffff' } : undefined}
                       />
                     ) : (
                       <div className={styles.cardMedia} style={{ backgroundColor: '#e0e0e0', width: '100%', height: '100%' }} />
