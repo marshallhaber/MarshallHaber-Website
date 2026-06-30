@@ -14,7 +14,7 @@ export default function Work() {
   const [searchQuery, setSearchQuery] = useState('');
   const listRef = useRef(null);
 
-  const [searchPlaceholder, setSearchPlaceholder] = useState("Find work by client, type");
+  const [searchPlaceholder, setSearchPlaceholder] = useState("Find work by client");
 
   useLayoutEffect(() => {
     document.body.style.backgroundColor = "#fbf0f2";
@@ -24,7 +24,7 @@ export default function Work() {
       if (window.innerWidth < 768) {
         setSearchPlaceholder("Search work...");
       } else {
-        setSearchPlaceholder("Find work by client, type");
+        setSearchPlaceholder("Find work by client");
       }
     };
     handleResize();

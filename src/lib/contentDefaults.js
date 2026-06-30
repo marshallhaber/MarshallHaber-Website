@@ -337,7 +337,7 @@ export const defaults = {
       servicesLabel: "Services",
       servicesValue: "Strategy · Brand Identity · Website",
     },
-    moreProjectsHeading: "More projects",
+    moreProjectsHeading: "Next Project",
 
   },
 

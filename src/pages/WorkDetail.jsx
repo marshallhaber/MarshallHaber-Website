@@ -124,14 +124,20 @@ export default function WorkDetail() {
     return <Navigate to="/work" replace />;
   }
 
-  // Only projects with an explicit moreProjectsOrder appear in this strip,
-  // sorted ascending. Excludes the current project. Falls back to the first
-  // 3 of the CMS array if nothing has been ordered (preserves old behavior).
-  const candidates = projects.filter(p => p.slug !== slug);
-  const ordered = candidates
-    .filter(p => p.moreProjectsOrder !== null)
-    .sort((a, b) => a.moreProjectsOrder - b.moreProjectsOrder);
-  const moreProjects = ordered.length > 0 ? ordered.slice(0, 3) : candidates.slice(0, 3);
+  // "Next Project" cycle: show the 3 projects immediately after the current one
+  // (by sortOrder if set, otherwise by array index), wrapping around the end.
+  const sorted = [...projects].sort((a, b) => {
+    const aHas = Number.isFinite(parseInt(a.sortOrder, 10));
+    const bHas = Number.isFinite(parseInt(b.sortOrder, 10));
+    if (aHas && bHas) return parseInt(a.sortOrder, 10) - parseInt(b.sortOrder, 10);
+    if (aHas) return -1;
+    if (bHas) return 1;
+    return 0;
+  });
+  const currentIdx = sorted.findIndex(p => p.slug === slug);
+  const moreProjects = currentIdx === -1
+    ? sorted.filter(p => p.slug !== slug).slice(0, 3)
+    : [1, 2, 3].map(off => sorted[(currentIdx + off) % sorted.length]).filter(Boolean);
 
   return (
     <motion.div
